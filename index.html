@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Lịch 12 tháng PDF</title>
+  <link rel="stylesheet" href="./index.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="./lunar.js"></script>
+  <script src="./const.js"></script>
+  <script src="./functions.js"></script>
+
+  <!-- Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=WDXL+Lubrifont+TC&display=swap" rel="stylesheet">
+  <!-- font-family: "WDXL Lubrifont TC", sans-serif; -->
+
+</head>
+
+<body>
+  <!-- Thanh chỉnh -->
+  <div class="controls">
+    <label>Năm: <input type="number" id="yearInput" value="2025" /></label>
+    <label>Font chữ:
+      <select id="fontSelect">
+        <option value="Arial">Arial</option>
+        <option value="Times New Roman">Times New Roman</option>
+        <option value="Courier New">Courier New</option>
+        <option value="Verdana">Verdana</option>
+        <option value="WDXL Lubrifont TC">WDXL Lubrifont TC</option>
+      </select>
+    </label>
+    <label>Cỡ chữ:
+      <input type="range" id="fontSizeInput" min="10" max="30" value="14" />
+      <span id="fontSizeValue">14px</span>
+    </label>
+    <button onclick="generateCalendars()">Tạo lịch</button>
+    <button onclick="downloadPDF()">Tải PDF</button>
+    <button onclick="exportCalendarToPDF()">Xuất PDF</button>
+  </div>
+
+  <!-- Render lịch -->
+  <div id="all-calendars"></div>
+
+  <script>
+    function generateCalendars() {
+      const container = document.getElementById("all-calendars");
+      container.innerHTML = "";
+
+      const year = parseInt(document.getElementById("yearInput").value);
+      const font = document.getElementById("fontSelect").value;
+      const fontSize = document.getElementById("fontSizeInput").value + "px";
+
+      const daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+      if ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0) {
+        daysInMonth[1] = 29;
+      }
+
+      for (let month = 0; month < 12; month++) {
+        const cal = document.createElement("div");
+        cal.className = "calendar";
+        cal.style.fontFamily = font;
+        cal.style.fontSize = fontSize;
+
+        const header = document.createElement("div");
+        header.className = "calendar-header";
+        // year
+        const headerYear = document.createElement("div");
+        headerYear.className = "calendar-header-year";
+        headerYear.textContent = year;
+        // logo
+        const logoWrapper = document.createElement("div");
+        logoWrapper.className = "calendar-logo-wrapper";
+        const logo = document.createElement("img");
+        logo.src = "./logo.png";
+        logo.alt = "Logo";
+        logo.className = "calendar-logo";
+        logoWrapper.appendChild(logo);
+        // month
+        const headerMonth = document.createElement("div");
+        headerMonth.className = "calendar-header-month";
+        const headerMonthL1 = document.createElement("div");
+        const headerMonthL2 = document.createElement("div");
+        headerMonthL1.textContent = `${convertMonthToEnglish(month + 1)}`;
+        headerMonthL2.textContent = `Tháng ${convertMonthToText(month + 1)}`;
+
+        headerMonth.appendChild(headerMonthL1);
+        headerMonth.appendChild(headerMonthL2);
+
+        header.appendChild(headerYear);
+        header.appendChild(logoWrapper);
+        header.appendChild(headerMonth);
+
+        cal.appendChild(header);
+
+        const table = document.createElement("table");
+        const thead = document.createElement("thead");
+        const headRow = document.createElement("tr");
+        days.forEach((d) => {
+          const th = document.createElement("th");
+
+          // Tiếng Việt
+          const line1 = document.createElement("div");
+          line1.textContent = daysVie[days.indexOf(d)];
+
+          // English
+          const line2 = document.createElement("div");
+          line2.textContent = d;
+          th.appendChild(line1);
+          th.appendChild(line2);
+          headRow.appendChild(th);
+        });
+        thead.appendChild(headRow);
+        table.appendChild(thead);
+
+        const tbody = document.createElement("tbody");
+
+        let firstDay = new Date(year, month, 1).getDay();
+        if (firstDay === 0) firstDay = 7; // CN = 7
+        let day = 1;
+        let row = document.createElement("tr");
+
+        // Ô trống trước ngày 1
+        let emptyStart = firstDay - 1;
+        let currentCol = 0;
+        if (emptyStart > 0) {
+          const td = document.createElement("td");
+          td.className = "empty-cell start";
+          td.colSpan = emptyStart;
+          row.appendChild(td);
+          currentCol += emptyStart;
+        }
+
+        while (day <= daysInMonth[month]) {
+          if (currentCol === 7) {
+            tbody.appendChild(row);
+            row = document.createElement("tr");
+            currentCol = 0; // Reset cột
+          }
+          let lunar = convertSolar2Lunar(day, month + 1, year, 7); // timezone GMT+7 cho VN
+
+          const cell = document.createElement("td");
+          // Ngày dương (số to giữa)
+          const solarDiv = document.createElement("div");
+          solarDiv.classList.add("solar-day");
+          solarDiv.textContent = day;
+
+          // Ngày âm (số nhỏ góc trên phải)
+          const lunarDiv = document.createElement("div");
+          lunarDiv.classList.add("lunar-day");
+          if (lunar[0] == 1) {
+            if (lunar[3] == 1) {
+              lunarDiv.textContent = lunar[0] + "/" + lunar[1] + " Nhuận"; // Tháng âm
+            } else {
+              lunarDiv.textContent = lunar[0] + "/" + lunar[1]; // Tháng âm
+            }
+          } else {
+            lunarDiv.textContent = lunar[0]; // Ngày âm
+          }
+
+          cell.appendChild(solarDiv);
+          cell.appendChild(lunarDiv);
+
+          if (currentCol === 6) cell.classList.add("sunday"); // CN
+          row.appendChild(cell);
+          currentCol++;
+          day++;
+        }
+
+        // Ô trống còn lại
+        let emptyEnd = 7 - row.children.length;
+        if (emptyEnd > 0) {
+          const td = document.createElement("td");
+          td.className = "empty-cell end";
+          td.colSpan = emptyEnd;
+          row.appendChild(td);
+        }
+        // Thêm nhân đức Đức Mẹ
+        if (emptyStart > emptyEnd) {
+          const startCell = row.querySelector(".empty-cell.start");
+          if (startCell)
+            startCell.innerHTML = "Bạn có thể ghi chú đầu tháng!";
+        } else if (emptyEnd > emptyStart) {
+          const endCell = row.querySelector(".empty-cell.end");
+          if (endCell) endCell.innerHTML = "Bạn có thể ghi chú cuối tháng!";
+        } else if (emptyStart === emptyEnd && emptyStart > 0) {
+          const startCell = row.querySelector(".empty-cell.start");
+          const endCell = row.querySelector(".empty-cell.end");
+          if (startCell) startCell.innerHTML = "Ghi chú đầu";
+          if (endCell) endCell.innerHTML = "Ghi chú cuối";
+        }
+        tbody.appendChild(row);
+
+        table.appendChild(tbody);
+        cal.appendChild(table);
+        container.appendChild(cal);
+      }
+    }
+
+    // Update số px khi kéo slider
+    document
+      .getElementById("fontSizeInput")
+      .addEventListener("input", (e) => {
+        document.getElementById("fontSizeValue").textContent =
+          e.target.value + "px";
+      });
+
+    async function downloadPDF() {
+      const {
+        jsPDF
+      } = window.jspdf;
+      const pdf = new jsPDF({
+        orientation: "landscape",
+        unit: "mm",
+        format: "a4",
+      });
+
+      const calendars = document.querySelectorAll(".calendar");
+
+      for (let i = 0; i < calendars.length; i++) {
+        const canvas = await html2canvas(calendars[i], {
+          scale: 3
+        });
+        const imgData = canvas.toDataURL("image/png");
+
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        const imgWidth = pageWidth;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+        if (i > 0) pdf.addPage();
+        pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+      }
+
+      pdf.save("lich-12-thang.pdf");
+    }
+  </script>
+  <script>
+    async function exportCalendarToPDF() {
+      // Lấy jsPDF từ thư viện
+      const {
+        jsPDF
+      } = window.jspdf;
+
+      // Tạo đối tượng PDF khổ A4 ngang (landscape)
+      const pdf = new jsPDF("l", "mm", "a4");
+
+      // Render HTML -> PDF
+      await pdf.html(document.getElementById("calendar"), {
+        callback: function(doc) {
+          doc.save("calendar.pdf"); // Lưu file
+        },
+        x: 10, // Lề trái
+        y: 10, // Lề trên
+        width: 277, // Chiều rộng khớp khổ A4 ngang
+        windowWidth: 1000 // Giả lập độ rộng viewport khi render
+      });
+    }
+  </script>
+</body>
+
+</html>
