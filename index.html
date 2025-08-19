@@ -238,25 +238,34 @@
     }
   </script>
   <script>
-    async function exportCalendarToPDF() {
-      // Lấy jsPDF từ thư viện
+    async function exportCalendarToPDF(monthSelector = ".calendar", fileName = "calendar.pdf") {
       const {
         jsPDF
       } = window.jspdf;
 
-      // Tạo đối tượng PDF khổ A4 ngang (landscape)
-      const pdf = new jsPDF("l", "mm", "a4");
-
-      // Render HTML -> PDF
-      await pdf.html(document.getElementById("calendar"), {
-        callback: function(doc) {
-          doc.save("calendar.pdf"); // Lưu file
-        },
-        x: 10, // Lề trái
-        y: 10, // Lề trên
-        width: 277, // Chiều rộng khớp khổ A4 ngang
-        windowWidth: 1000 // Giả lập độ rộng viewport khi render
+      const pdf = new jsPDF({
+        orientation: "landscape", // ngang
+        unit: "mm",
+        format: "a4"
       });
+
+      const months = document.querySelectorAll(monthSelector);
+
+      for (let i = 0; i < months.length; i++) {
+        await pdf.html(months[i], {
+          callback: function(doc) {
+            if (i < months.length - 1) {
+              doc.addPage(); // thêm trang trừ tháng cuối
+            }
+          },
+          x: 10,
+          y: 10,
+          width: 277, // khổ A4 ngang ~297mm trừ lề
+          windowWidth: 1000 // giả lập viewport
+        });
+      }
+
+      pdf.save(fileName);
     }
   </script>
 </body>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Lịch Phụng Vụ Công Giáo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background: #f5f5f5;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2e7d32;
+    }
+
+    .month {
+      margin-bottom: 50px;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    caption {
+      font-size: 1.5em;
+      margin: 10px 0;
+      font-weight: bold;
+      color: #1b5e20;
+    }
+
+    th,
+    td {
+      border: 1px solid #999;
+      padding: 8px;
+      text-align: center;
+      vertical-align: top;
+    }
+
+    th {
+      background-color: #c8e6c9;
+      color: #1b5e20;
+    }
+
+    td.weekend {
+      background-color: #e8f5e9;
+    }
+
+    td.solemnity {
+      background-color: #ffe0b2;
+      font-weight: bold;
+      color: #bf360c;
+    }
+
+    td .date {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    td .info {
+      font-size: 0.85em;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Lịch Phụng Vụ Công Giáo <span id="yearTitle"></span></h1>
+  <div id="calendar"></div>
+
+  <script>
+    // ----- 1. Tính Phục Sinh -----
+    function getEaster(year) {
+      let f = Math.floor,
+        G = year % 19,
+        C = f(year / 100),
+        H = (C - f(C / 4) - f((8 * C + 13) / 25) + 19 * G + 15) % 30,
+        I = H - f(H / 28) * (1 - f(29 / (H + 1)) * f((21 - G) / 11)),
+        J = (year + f(year / 4) + I + 2 - C + f(C / 4)) % 7,
+        L = I - J,
+        month = 3 + f((L + 40) / 44),
+        day = L + 28 - 31 * f(month / 4);
+      return new Date(year, month - 1, day);
+    }
+
+    // ----- 2. Các lễ trọng di động -----
+    function getMovableFeasts(year) {
+      let easter = getEaster(year);
+      let oneDay = 24 * 60 * 60 * 1000;
+      return {
+        "Phục Sinh": easter,
+        "Lên Trời": new Date(easter.getTime() + 39 * oneDay),
+        "Chúa Thánh Thần": new Date(easter.getTime() + 49 * oneDay),
+        "Thứ Tư Lễ Tro": new Date(easter.getTime() - 46 * oneDay)
+      };
+    }
+
+    // ----- 3. Mùa phụng vụ -----
+    function getLiturgicalSeason(date, year) {
+      let easter = getEaster(year);
+      let feasts = getMovableFeasts(year);
+      let christmas = new Date(year, 11, 25);
+      let adventStart = new Date(christmas);
+      adventStart.setDate(adventStart.getDate() - (3 * 7 + christmas.getDay())); // 4 CN trước Giáng Sinh
+      let lentStart = feasts["Thứ Tư Lễ Tro"];
+      let easterEnd = new Date(feasts["Chúa Thánh Thần"]);
+
+      if (date >= adventStart && date < christmas) return "Mùa Vọng";
+      else if (date >= christmas && date < new Date(year + 1, 0, 13)) return "Mùa Giáng Sinh";
+      else if (date >= lentStart && date < easter) return "Mùa Chay";
+      else if (date >= easter && date <= easterEnd) return "Mùa Phục Sinh";
+      else return "Mùa Thường Niên";
+    }
+
+    // ----- 4. Tuần lễ -----
+    function getLiturgicalWeek(date, year) {
+      let season = getLiturgicalSeason(date, year);
+      let easter = getEaster(year);
+      let feasts = getMovableFeasts(year);
+
+      if (season === "Mùa Thường Niên") {
+        let startOfOrdinary1 = new Date(year, 0, 6);
+        while (startOfOrdinary1.getDay() !== 0) startOfOrdinary1.setDate(startOfOrdinary1.getDate() + 1);
+        let endOfOrdinary1 = new Date(feasts["Thứ Tư Lễ Tro"]);
+        let startOfOrdinary2 = new Date(feasts["Chúa Thánh Thần"].getTime() + 1 * 24 * 60 * 60 * 1000);
+        let adventStart = new Date(year, 11, 25);
+        adventStart.setDate(adventStart.getDate() - (3 * 7 + adventStart.getDay()));
+
+        if (date >= startOfOrdinary1 && date < endOfOrdinary1) {
+          let diff = Math.floor((date - startOfOrdinary1) / (7 * 24 * 60 * 60 * 1000));
+          return "Chúa Nhật Thường Niên " + (diff + 1);
+        } else if (date >= startOfOrdinary2 && date < adventStart) {
+          let diff = Math.floor((date - startOfOrdinary2) / (7 * 24 * 60 * 60 * 1000));
+          return "Chúa Nhật Thường Niên " + (diff + 1 + 9);
+        } else return "Không thuộc CN Thường Niên";
+      } else {
+        let start;
+        switch (season) {
+          case "Mùa Vọng":
+            let christmas = new Date(year, 11, 25);
+            start = new Date(christmas);
+            start.setDate(start.getDate() - (3 * 7 + christmas.getDay()));
+            break;
+          case "Mùa Chay":
+            start = feasts["Thứ Tư Lễ Tro"];
+            break;
+          case "Mùa Phục Sinh":
+            start = easter;
+            break;
+          case "Mùa Giáng Sinh":
+            start = new Date(year, 11, 25);
+            break;
+        }
+        let diff = Math.floor((date - start) / (7 * 24 * 60 * 60 * 1000));
+        return "Chúa Nhật " + (diff + 1) + " của " + season;
+      }
+    }
+
+    // ----- 5. Năm phụng vụ -----
+    function getLiturgicalYear(year) {
+      let cycle = (year) % 3;
+      return cycle === 0 ? "C" : (cycle === 1 ? "C" : "B");
+    }
+
+    // ----- 6. Convert ngày -----
+    function convertLiturgicalDate(day, month, year) {
+      let date = new Date(year, month - 1, day);
+      let days = ["Chúa Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
+      let dayName = days[date.getDay()];
+      let season = getLiturgicalSeason(date, year);
+      let week = getLiturgicalWeek(date, year);
+      let litYear = getLiturgicalYear(year);
+      let feasts = getMovableFeasts(year);
+      let feastName = null;
+      for (let f in feasts) {
+        let d = feasts[f];
+        if (d.getDate() === date.getDate() && d.getMonth() === date.getMonth()) {
+          feastName = f;
+          break;
+        }
+      }
+      return {
+        dayName,
+        week,
+        season,
+        liturgicalYear: litYear,
+        feast: feastName
+      };
+    }
+
+    // ----- 7. Tạo bảng lịch -----
+    function generateCalendar(year) {
+      document.getElementById("yearTitle").innerText = year;
+      const container = document.getElementById("calendar");
+      container.innerHTML = "";
+      const feasts = getMovableFeasts(year);
+
+      for (let month = 0; month < 12; month++) {
+        let firstDay = new Date(year, month, 1);
+        let lastDay = new Date(year, month + 1, 0);
+        let table = document.createElement("table");
+        table.classList.add("month");
+        let caption = document.createElement("caption");
+        caption.innerText = firstDay.toLocaleString("vi-VN", {
+          month: "long",
+          year: "numeric"
+        });
+        table.appendChild(caption);
+
+        let header = document.createElement("tr");
+        ["CN", "Th2", "Th3", "Th4", "Th5", "Th6", "Th7"].forEach(d => {
+          let th = document.createElement("th");
+          th.innerText = d;
+          header.appendChild(th);
+        });
+        table.appendChild(header);
+
+        let date = 1;
+        let startDay = firstDay.getDay();
+        while (date <= lastDay.getDate()) {
+          let tr = document.createElement("tr");
+          for (let i = 0; i < 7; i++) {
+            let td = document.createElement("td");
+            if ((date == 1 && i < startDay) || date > lastDay.getDate()) td.innerHTML = "";
+            else {
+              let current = new Date(year, month, date);
+              td.innerHTML = `<span class="date">${date}</span>`;
+              let info = convertLiturgicalDate(date, month + 1, year);
+              td.innerHTML += `<span class="info">${info.week}<br>${info.season}<br>${info.liturgicalYear}${info.feast ? "<br>" + info.feast : ""}</span>`;
+              if (current.getDay() === 0) td.classList.add("weekend");
+              if (info.feast) td.classList.add("solemnity");
+              date++;
+            }
+            tr.appendChild(td);
+          }
+          table.appendChild(tr);
+        }
+        container.appendChild(table);
+      }
+    }
+
+    generateCalendar(new Date().getFullYear());
+  </script>
+
+</body>
+
+</html>
