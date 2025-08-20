@@ -1,49 +1,71 @@
 <!DOCTYPE html>
 <html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Lịch 12 tháng PDF</title>
+    <link rel="stylesheet" href="./index.css" />
+    <link rel="stylesheet" href="./modal.css" />
 
-<head>
-  <meta charset="UTF-8" />
-  <title>Lịch 12 tháng PDF</title>
-  <link rel="stylesheet" href="./index.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="./lunar.js"></script>
-  <script src="./const.js"></script>
-  <script src="./functions.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="./lunar.js"></script>
+    <script src="./const.js"></script>
+    <script src="./functions.js"></script>
 
-  <!-- Font -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=WDXL+Lubrifont+TC&display=swap" rel="stylesheet">
-  <!-- font-family: "WDXL Lubrifont TC", sans-serif; -->
+    <!-- Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=WDXL+Lubrifont+TC&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- font-family: "WDXL Lubrifont TC", sans-serif; -->
+  </head>
 
-</head>
+  <body>
+    <!-- Thanh chỉnh -->
+    <div class="controls">
+      <label>Năm: <input type="number" id="yearInput" value="2025" /></label>
+      <label
+        >Font chữ:
+        <select id="fontSelect">
+          <option value="Arial">Arial</option>
+          <option value="Times New Roman">Times New Roman</option>
+          <option value="Courier New">Courier New</option>
+          <option value="Verdana">Verdana</option>
+          <option value="WDXL Lubrifont TC">WDXL Lubrifont TC</option>
+        </select>
+      </label>
+      <label
+        >Cỡ chữ:
+        <input type="range" id="fontSizeInput" min="10" max="30" value="14" />
+        <span id="fontSizeValue">14px</span>
+      </label>
+      <button onclick="generateCalendars()">Tạo lịch</button>
+      <button onclick="downloadPDF()">Tải PDF</button>
+      <button onclick="exportPDF()">Xuất PDF</button>
+    </div>
+    <!-- Modal thông báo -->
+    <section class="modal hidden">
+      <div>
+        <h3>Thông Báo!</h3>
+        <p>Đang trong quá trình xử lý dữ liệu, vui lòng đợi trong giây lát.</p>
+      </div>
 
-<body>
-  <!-- Thanh chỉnh -->
-  <div class="controls">
-    <label>Năm: <input type="number" id="yearInput" value="2025" /></label>
-    <label>Font chữ:
-      <select id="fontSelect">
-        <option value="Arial">Arial</option>
-        <option value="Times New Roman">Times New Roman</option>
-        <option value="Courier New">Courier New</option>
-        <option value="Verdana">Verdana</option>
-        <option value="WDXL Lubrifont TC">WDXL Lubrifont TC</option>
-      </select>
-    </label>
-    <label>Cỡ chữ:
-      <input type="range" id="fontSizeInput" min="10" max="30" value="14" />
-      <span id="fontSizeValue">14px</span>
-    </label>
-    <button onclick="generateCalendars()">Tạo lịch</button>
-    <button onclick="downloadPDF()">Tải PDF</button>
-    <button onclick="exportCalendarToPDF()">Xuất PDF</button>
-  </div>
+      <button class="btn">Submit</button>
+    </section>
+    <!-- Render lịch -->
+    <div id="all-calendars"></div>
 
-  <!-- Render lịch -->
-  <div id="all-calendars"></div>
-
+    <div class="overlay hidden"></div>
+  </body>
+  <script src="./modal.js"></script>
   <script>
     function generateCalendars() {
       const container = document.getElementById("all-calendars");
@@ -180,8 +202,7 @@
         // Thêm nhân đức Đức Mẹ
         if (emptyStart > emptyEnd) {
           const startCell = row.querySelector(".empty-cell.start");
-          if (startCell)
-            startCell.innerHTML = "Bạn có thể ghi chú đầu tháng!";
+          if (startCell) startCell.innerHTML = "Bạn có thể ghi chú đầu tháng!";
         } else if (emptyEnd > emptyStart) {
           const endCell = row.querySelector(".empty-cell.end");
           if (endCell) endCell.innerHTML = "Bạn có thể ghi chú cuối tháng!";
@@ -200,20 +221,17 @@
     }
 
     // Update số px khi kéo slider
-    document
-      .getElementById("fontSizeInput")
-      .addEventListener("input", (e) => {
-        document.getElementById("fontSizeValue").textContent =
-          e.target.value + "px";
-      });
+    document.getElementById("fontSizeInput").addEventListener("input", (e) => {
+      document.getElementById("fontSizeValue").textContent =
+        e.target.value + "px";
+    });
 
     async function downloadPDF() {
-      const {
-        jsPDF
-      } = window.jspdf;
+      openModal(); // Hiển thị modal thông báo
+      const { jsPDF } = window.jspdf;
       const pdf = new jsPDF({
         orientation: "landscape",
-        unit: "mm",
+        unit: "pt",
         format: "a4",
       });
 
@@ -221,9 +239,14 @@
 
       for (let i = 0; i < calendars.length; i++) {
         const canvas = await html2canvas(calendars[i], {
-          scale: 3
+          scale: 5,
+          useCORS: true, // Cho phép tải ảnh từ nguồn khác
+          allowTaint: true, // Cho phép vẽ ảnh từ nguồn khác
+
+          backgroundColor: "#fffff", // Không có nền
+          dpi: 300, // Độ phân giải cao
         });
-        const imgData = canvas.toDataURL("image/png");
+        const imgData = canvas.toDataURL("image/JPEG", 1.0);
 
         const pageWidth = pdf.internal.pageSize.getWidth();
         const pageHeight = pdf.internal.pageSize.getHeight();
@@ -231,43 +254,55 @@
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
         if (i > 0) pdf.addPage();
-        pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+        pdf.addImage(imgData, "JPEG", 0, 0, imgWidth, imgHeight);
       }
-
+      closeModal(); // Ẩn modal sau khi hoàn thành
       pdf.save("lich-12-thang.pdf");
     }
+    const { jsPDF } = window.jspdf;
   </script>
+
+  <script src="./CrimsonText.js"></script>
+  <script src="./CrimsonTextBold.js"></script>
   <script>
-    async function exportCalendarToPDF(monthSelector = ".calendar", fileName = "calendar.pdf") {
-      const {
-        jsPDF
-      } = window.jspdf;
+    async function exportPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF("l", "mm", "a4"); // landscape, A4
+      // Lấy tất cả các tháng có class "calendar"
+      const calendars = document.querySelectorAll(".calendar");
+      doc.setFont("CrimsonText", "normal");
+      console.log(doc.getFontList());
+      for (let i = 0; i < calendars.length; i++) {
+        let element = calendars[i];
 
-      const pdf = new jsPDF({
-        orientation: "landscape", // ngang
-        unit: "mm",
-        format: "a4"
-      });
-
-      const months = document.querySelectorAll(monthSelector);
-
-      for (let i = 0; i < months.length; i++) {
-        await pdf.html(months[i], {
-          callback: function(doc) {
-            if (i < months.length - 1) {
-              doc.addPage(); // thêm trang trừ tháng cuối
-            }
-          },
-          x: 10,
-          y: 10,
-          width: 277, // khổ A4 ngang ~297mm trừ lề
-          windowWidth: 1000 // giả lập viewport
+        await doc.html(element, {
+          x: 0,
+          y: 0,
+          width: 297, // chiều rộng A4 ngang trừ padding
+          windowWidth: 1200, // scale cao để nét hơn
+          autoPaging: false,
         });
+
+        if (i < calendars.length - 1) {
+          doc.addPage("a4", "l"); // thêm trang mới cho tháng tiếp theo
+        }
       }
 
-      pdf.save(fileName);
+      doc.save("calendar.pdf");
     }
   </script>
-</body>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script>
+    function exportYearPDF() {
+      const element = document.getElementById("all-calendars"); // div chứa tất cả calendar
+      const opt = {
+        margin: 0,
+        filename: "calendar.pdf",
+        image: { type: "jpeg", quality: 1 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: "mm", format: "a4", orientation: "landscape" },
+      };
+      html2pdf().set(opt).from(element).save();
+    }
+  </script>
 </html>
