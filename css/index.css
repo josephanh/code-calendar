@@ -1,5 +1,5 @@
 body {
-    background: #f0f2f5;
+    background: #ffffff;
     margin: 0;
     padding: 20px;
 
@@ -11,7 +11,7 @@ body {
     border-radius: 10px;
     margin-bottom: 20px;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-    display: flex;
+    display:none;
     align-items: center;
     gap: 15px;
     flex-wrap: wrap;
@@ -77,8 +77,8 @@ button:last-of-type {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    border: 1px solid #ddd;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    /* border: 1px solid #ddd; */
+    /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); */
     margin-bottom: 20px;
     margin: 20px auto;
 }
@@ -116,6 +116,12 @@ td {
 td.sunday {
     /* background: #ffebee; */
     color: red;
+    font-weight: bold;
+}
+
+td.saturday {
+    background: #49b3ff;
+    color: rgb(255, 255, 255);
     font-weight: bold;
 }
 

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>jsPDF DOM Font Test</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="stylesheet" href="./index.css" />
+    <link rel="stylesheet" href="./modal.css" />
+  </head>
+  <body>
+    <div id="content" style="font-family: 'CrimsonText'; font-size: 30px">
+      <div>Xin Chào Tuấn Anh Nguyễn</div>
+      <!-- <h4>Hôm nay là Thứ Tư, ngày 20 tháng 8 năm 2025.</h4>
+      <p>Font này có hỗ trợ tiếng Việt: ă â ê ô ơ đ.</p> -->
+    </div>
+
+    <button onclick="makePDF()">Xuất PDF</button>
+
+    <script>
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF("l", "pt", "a4"); // landscape, A4
+    </script>
+    <script src="./font/CrimsonText-Regular-normal.js"></script>
+    <script>
+      // Font Roboto dạng base64 (đã convert từ .ttf sang .js bằng tool jspdf)
+      // Ở đây mình dùng bản rút gọn, Tuấn Anh có thể thay bằng font khác
+
+      function makePDF() {
+        // Lấy tất cả các tháng có class "calendar"
+        const calendars = document.querySelectorAll(".calendar");
+
+        doc.addFont("./CrimsonText.ttf", "CrimsonText", "normal");
+
+
+        doc.setFont("CrimsonText", "normal");
+
+        console.log(doc.getFontList());
+        doc.setFontSize(16);
+        doc.text("Xin chào Tuấn Anh", 100, 100);
+        // Render DOM vào PDF
+        doc.html(document.getElementById("content"), {
+          callback: function (pdf) {
+            doc.save("demo.pdf");
+          },
+        });
+      }
+    </script>
+  </body>
+</html>
