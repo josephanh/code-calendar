@@ -175,6 +175,7 @@ td .lunar-day {
     grid-template-columns: 1fr auto 1fr;
     align-items: end;
     margin-bottom: 1rem;
+    font-family: 'TitleFont', sans-serif !important;
 }
 
 .calendar-header-year {
