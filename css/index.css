@@ -2,25 +2,35 @@ body {
     background: #ffffff;
     margin: 0;
     padding: 20px;
+    display: grid;
+    grid-template-columns: 20% 75%;
 
+}
+
+.printing {
+    display: block !important;
 }
 
 .controls {
     background: white;
     padding: 15px;
     border-radius: 10px;
-    margin-bottom: 20px;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-    display:none;
-    align-items: center;
+    display:flex;
+    align-items: flex-start;
+    align-content: flex-start;
+    justify-content: start;
     gap: 15px;
     flex-wrap: wrap;
     width: 100%;
     max-width: 297mm;
+    margin-right: 4rem;
 }
 
 label {
     font-weight: bold;
+    width: 100%;
+    margin-top: 20px;
 }
 
 input[type="number"],
@@ -29,10 +39,12 @@ select {
     border: 1px solid #ccc;
     border-radius: 6px;
     font-size: 14px;
+    width: 100%;
 }
 
 input[type="range"] {
     vertical-align: middle;
+    width: 100%;
 }
 
 button {
@@ -43,6 +55,7 @@ button {
     font-size: 14px;
     font-weight: bold;
     transition: 0.2s;
+    width: 100%;
 }
 
 button:hover {
@@ -64,14 +77,28 @@ button:last-of-type {
     color: white;
 }
 
+
+.fake-calendar {
+    width: 100%;
+    max-width: 297mm; /*297mm A4 ngang*/
+    height: 210mm;
+    aspect-ratio: 297/210;
+    /* A4 ngang */
+    background: white;
+    box-sizing: border-box;
+    page-break-after: always;
+    /* border: 1px solid #ddd; */
+    /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); */
+    margin: 0px auto;
+}
+
 .calendar {
     width: 100%;
-    max-width: 297mm;
+    max-width: 300mm; /*297mm A4 ngang*/
     max-height: 210mm;
     aspect-ratio: 297/210;
     /* A4 ngang */
     background: white;
-    padding: 20px;
     box-sizing: border-box;
     page-break-after: always;
     display: flex;
@@ -79,8 +106,8 @@ button:last-of-type {
     justify-content: space-between;
     /* border: 1px solid #ddd; */
     /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); */
-    margin-bottom: 20px;
-    margin: 20px auto;
+    margin: 0px auto;
+    margin-top: 20px;
 }
 
 .calendar h2 {
@@ -151,7 +178,6 @@ td .lunar-day {
 }
 
 .calendar-header-year {
-    font-size: 18px;
     font-weight: bold;
     text-align: left;
 }
@@ -173,4 +199,64 @@ td .lunar-day {
     text-align: right;
     flex-grow: 1;
     text-transform: uppercase;
+}
+
+
+/*********** Baseline, reset styles ***********/
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* Removes default focus */
+input[type="range"]:focus {
+  outline: none;
+}
+
+/******** Chrome, Safari, Opera and Edge Chromium styles ********/
+/* slider track */
+input[type="range"]::-webkit-slider-runnable-track {
+  background-color: #add8e6;
+  border-radius: 0.5rem;
+  height: 0.5rem;
+}
+
+/* slider thumb */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  margin-top: -4px; /* Centers thumb on the track */
+  background-color: #808080;
+  border-radius: 0.5rem;
+  height: 1rem;
+  width: 1rem;
+}
+
+input[type="range"]:focus::-webkit-slider-thumb {
+  outline: 3px solid #808080;
+  outline-offset: 0.125rem;
+}
+
+/*********** Firefox styles ***********/
+/* slider track */
+input[type="range"]::-moz-range-track {
+  background-color: #add8e6;
+  border-radius: 0.5rem;
+  height: 0.5rem;
+}
+
+/* slider thumb */
+input[type="range"]::-moz-range-thumb {
+  background-color: #808080;
+  border: none; /*Removes extra border that FF applies*/
+  border-radius: 0.5rem;
+  height: 1rem;
+  width: 1.5rem;
+}
+
+input[type="range"]:focus::-moz-range-thumb{
+  outline: 3px solid #808080;
+  outline-offset: 0.125rem;
 }

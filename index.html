@@ -28,9 +28,9 @@
     <!-- font-family: "WDXL Lubrifont TC", sans-serif; -->
   </head>
 
-  <body>
+  <body id="body">
     <!-- Thanh chỉnh -->
-    <div class="controls">
+    <div class="controls" id="controls">
       <label>Năm: <input type="number" id="yearInput" value="2025" /></label>
       <label
         >Font chữ:
@@ -43,13 +43,25 @@
         </select>
       </label>
       <label
-        >Cỡ chữ:
-        <input type="range" id="fontSizeInput" min="10" max="30" value="14" />
-        <span id="fontSizeValue">14px</span>
+        >Cỡ chữ cho nội dung:
+        <input type="range" id="fontSizeInput" min="10" max="30" value="16" />
+        <span id="fontSizeValue">16px</span>
       </label>
+      <label
+        >Cỡ chữ cho tiêu đề:
+        <input
+          type="range"
+          id="titleFontSizeInput"
+          min="10"
+          max="30"
+          value="20"
+        />
+        <span id="titleFontSizeValue">20px</span>
+      </label>
+
       <button onclick="generateCalendars()">Tạo lịch</button>
-      <button onclick="downloadPDF()">Tải PDF</button>
-      <button onclick="exportPDF()">Xuất PDF</button>
+      <!-- <button onclick="downloadPDF()">Tải PDF</button> -->
+      <!-- <button onclick="exportPDF()">Xuất PDF</button> -->
     </div>
     <!-- Modal thông báo -->
     <section class="modal hidden">
@@ -70,5 +82,38 @@
 
   <script src="./base64fonts/CrimsonText.js"></script>
   <script src="./base64fonts/CrimsonTextBold.js"></script>
+  <script src="./js/exportCal.js"></script>
 
+  <script>
+    // lắng nghe sự kiện nút control + p
+    document.addEventListener("keydown", function (event) {
+      if (event.ctrlKey && event.key === "p") {
+        event.preventDefault();
+        let controls = document.getElementById("controls");
+        let body = document.getElementById("body");
+        let allCalendars = document.getElementById("all-calendars");
+        let cals = allCalendars.innerHTML;
+        body.classList.add("printing");
+        controls.classList.add("hidden");
+
+        allCalendars.innerHTML =
+          `<div class="fake-calendar"></div>` + cals;
+
+        var innn = alert(
+          "Muốn in khồn? /nĐang trong quá trình xử lý dữ liệu, vui lòng đợi trong giây lát."
+        );
+        if (innn) {
+          controls.classList.remove("hidden");
+          body.classList.remove("printing");
+          allCalendars.innerHTML = cals;
+          return;
+        } else {
+          window.print();
+          controls.classList.remove("hidden");
+          body.classList.remove("printing");
+          allCalendars.innerHTML = cals;
+        }
+      }
+    });
+  </script>
 </html>

@@ -27,7 +27,7 @@ function generateCalendars() {
     const logoWrapper = document.createElement("div");
     logoWrapper.className = "calendar-logo-wrapper";
     const logo = document.createElement("img");
-    logo.src = "./logo.png";
+    logo.src = "../image/logo.png";
     logo.alt = "Logo";
     logo.className = "calendar-logo";
     logoWrapper.appendChild(logo);
