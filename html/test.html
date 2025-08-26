@@ -1,864 +1,1082 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="vi">
-
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Tính Lễ Phục Sinh & Lịch Phụng Vụ (Chi tiết)</title>
-  <style>
-    :root {
-      --bg1: #071025;
-      --bg2: #0b1228;
-      --card: #07122b;
-      --glass: rgba(255, 255, 255, 0.03);
-      --muted: #9fb4d8;
-      --text: #eaf2ff;
-      --accent1: #7c3aed;
-      --accent2: #06b6d4;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html,
-    body {
-      height: 100%;
-      margin: 0;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      color: var(--text);
-      background:
-        radial-gradient(800px 500px at 10% 10%, rgba(124, 58, 237, 0.08), transparent 20%),
-        linear-gradient(180deg, var(--bg1), var(--bg2));
-    }
-
-    .container {
-      max-width: 1100px;
-      margin: 28px auto;
-      padding: 28px;
-    }
-
-    .card {
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 12px 40px rgba(2, 6, 23, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.03);
-    }
-
-    header {
-      display: flex;
-      gap: 16px;
-      align-items: center;
-      margin-bottom: 18px;
-    }
-
-    .logo {
-      width: 56px;
-      height: 56px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, var(--accent1), var(--accent2));
-      display: grid;
-      place-items: center;
-      font-weight: 800;
-      color: #041025;
-      font-size: 22px;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: 20px;
-    }
-
-    p.lead {
-      margin: 4px 0 0 0;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .controls {
-      display: flex;
-      gap: 12px;
-      margin-top: 10px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    input[type="number"] {
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      background: rgba(0, 0, 0, 0.18);
-      color: var(--text);
-      width: 140px;
-      font-size: 15px;
-    }
-
-    button {
-      padding: 10px 14px;
-      border-radius: 10px;
-      border: none;
-      cursor: pointer;
-      font-weight: 700;
-      color: #041025;
-      background: linear-gradient(90deg, var(--accent2), var(--accent1));
-      box-shadow: 0 8px 24px rgba(7, 12, 20, 0.6);
-    }
-
-    .row {
-      display: flex;
-      gap: 12px;
-      margin-top: 14px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .badge {
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.04);
-      color: var(--muted);
-      border: 1px solid rgba(255, 255, 255, 0.02);
-      font-weight: 700;
-    }
-
-    .resultBox {
-      margin-top: 18px;
-      padding: 16px;
-      border-radius: 12px;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
-      border: 1px solid rgba(255, 255, 255, 0.02);
-    }
-
-    .resultMain {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .big {
-      font-size: 20px;
-      font-weight: 800;
-      color: var(--text);
-    }
-
-    .small {
-      color: var(--muted);
-    }
-
-    /* table */
-    .tableWrap {
-      margin-top: 16px;
-      overflow: auto;
-      border-radius: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.03);
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.015), transparent);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 900px;
-    }
-
-    thead th {
-      position: sticky;
-      top: 0;
-      background: rgba(0, 0, 0, 0.25);
-      color: var(--muted);
-      padding: 12px 14px;
-      text-align: left;
-      font-size: 13px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-    }
-
-    tbody td {
-      padding: 12px 14px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.02);
-      font-size: 14px;
-      color: var(--text);
-    }
-
-    tbody tr:hover {
-      background: rgba(255, 255, 255, 0.02);
-    }
-
-    .col-season {
-      color: #c7d2fe;
-      font-weight: 700;
-      width: 220px;
-    }
-
-    .col-week {
-      width: 120px;
-      color: var(--muted);
-    }
-
-    .col-date {
-      width: 200px;
-      color: var(--muted);
-    }
-
-    .col-name {
-      color: #fde68a;
-      font-weight: 700;
-    }
-
-    .note {
-      margin-top: 12px;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    @media (max-width:920px) {
-      .big {
-        font-size: 18px;
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Tính Lễ Phục Sinh & Lịch Phụng Vụ (Chi tiết)</title>
+    <style>
+      :root {
+        --bg1: #071025;
+        --bg2: #0b1228;
+        --card: #07122b;
+        --glass: rgba(255, 255, 255, 0.03);
+        --muted: #9fb4d8;
+        --text: #eaf2ff;
+        --accent1: #7c3aed;
+        --accent2: #06b6d4;
       }
 
-      table {
-        min-width: 800px;
+      * {
+        box-sizing: border-box;
       }
-    }
 
-    @media (max-width:640px) {
-      table {
-        min-width: 700px;
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+          Roboto, "Helvetica Neue", Arial;
+        color: var(--text);
+        background: radial-gradient(
+            800px 500px at 10% 10%,
+            rgba(124, 58, 237, 0.08),
+            transparent 20%
+          ),
+          linear-gradient(180deg, var(--bg1), var(--bg2));
+      }
+
+      .container {
+        max-width: 1100px;
+        margin: 28px auto;
+        padding: 28px;
+      }
+
+      .card {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.02),
+          rgba(255, 255, 255, 0.01)
+        );
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 12px 40px rgba(2, 6, 23, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.03);
+      }
+
+      header {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        margin-bottom: 18px;
+      }
+
+      .logo {
+        width: 56px;
+        height: 56px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--accent1), var(--accent2));
+        display: grid;
+        place-items: center;
+        font-weight: 800;
+        color: #041025;
+        font-size: 22px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 20px;
+      }
+
+      p.lead {
+        margin: 4px 0 0 0;
+        color: var(--muted);
         font-size: 13px;
       }
-    }
-  </style>
-</head>
 
-<body>
-  <div class="container">
-    <div class="card">
-      <header>
-        <div class="logo">E</div>
-        <div>
-          <h1>Tính Lễ Phục Sinh & Lịch Phụng Vụ (Chi tiết)</h1>
-          <p class="lead">Nhập năm (năm có Lễ Phục Sinh) → hiển thị: Lễ Phục Sinh là thứ mấy; bảng đầy đủ các Chúa Nhật & lễ di động trong năm phụng vụ (Mùa Vọng → ... → Mùa Vọng).</p>
-        </div>
-      </header>
+      .controls {
+        display: flex;
+        gap: 12px;
+        margin-top: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
 
-      <div class="controls">
-        <input id="yearInput" type="number" placeholder="Ví dụ: 2026" min="1583" max="4099" />
-        <button id="calcBtn">Tính & Hiện Bảng</button>
-        <div class="badge" id="litBadge">Năm phụng vụ: -</div>
-        <div class="badge" id="easterBadge">Phục Sinh: -</div>
-      </div>
+      input[type="number"] {
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        background: rgba(0, 0, 0, 0.18);
+        color: var(--text);
+        width: 140px;
+        font-size: 15px;
+      }
 
-      <div class="resultBox" id="resultBox" style="display:none;">
-        <div class="resultMain">
+      button {
+        padding: 10px 14px;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        font-weight: 700;
+        color: #041025;
+        background: linear-gradient(90deg, var(--accent2), var(--accent1));
+        box-shadow: 0 8px 24px rgba(7, 12, 20, 0.6);
+      }
+
+      .row {
+        display: flex;
+        gap: 12px;
+        margin-top: 14px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .badge {
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--muted);
+        border: 1px solid rgba(255, 255, 255, 0.02);
+        font-weight: 700;
+      }
+
+      .resultBox {
+        margin-top: 18px;
+        padding: 16px;
+        border-radius: 12px;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.02),
+          rgba(255, 255, 255, 0.01)
+        );
+        border: 1px solid rgba(255, 255, 255, 0.02);
+      }
+
+      .resultMain {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .big {
+        font-size: 20px;
+        font-weight: 800;
+        color: var(--text);
+      }
+
+      .small {
+        color: var(--muted);
+      }
+
+      /* table */
+      .tableWrap {
+        margin-top: 16px;
+        overflow: auto;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.03);
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.015),
+          transparent
+        );
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 900px;
+      }
+
+      thead th {
+        position: sticky;
+        top: 0;
+        background: rgba(0, 0, 0, 0.25);
+        color: var(--muted);
+        padding: 12px 14px;
+        text-align: left;
+        font-size: 13px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      }
+
+      tbody td {
+        padding: 12px 14px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+        font-size: 14px;
+        color: var(--text);
+      }
+
+      tbody tr:hover {
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      .col-season {
+        color: #c7d2fe;
+        font-weight: 700;
+        width: 220px;
+      }
+
+      .col-week {
+        width: 120px;
+        color: var(--muted);
+      }
+
+      .col-date {
+        width: 200px;
+        color: var(--muted);
+      }
+
+      .col-name {
+        color: #fde68a;
+        font-weight: 700;
+      }
+
+      .note {
+        margin-top: 12px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      @media (max-width: 920px) {
+        .big {
+          font-size: 18px;
+        }
+
+        table {
+          min-width: 800px;
+        }
+      }
+
+      @media (max-width: 640px) {
+        table {
+          min-width: 700px;
+          font-size: 13px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="card">
+        <header>
+          <div class="logo">E</div>
           <div>
-            <div class="big" id="easterLine"></div>
-            <div class="small" id="easterSub"></div>
+            <h1>Tính Lễ Phục Sinh & Lịch Phụng Vụ (Chi tiết)</h1>
+            <p class="lead">
+              Nhập năm (năm có Lễ Phục Sinh) → hiển thị: Lễ Phục Sinh là thứ
+              mấy; bảng đầy đủ các Chúa Nhật & lễ di động trong năm phụng vụ
+              (Mùa Vọng → ... → Mùa Vọng).
+            </p>
           </div>
-          <div>
-            <div class="small">Tổng số mục: <span id="totalItems">0</span></div>
-          </div>
+        </header>
+
+        <div class="controls">
+          <input
+            id="yearInput"
+            type="number"
+            placeholder="Ví dụ: 2026"
+            min="1583"
+            max="4099"
+          />
+          <button id="calcBtn">Tính & Hiện Bảng</button>
+          <div class="badge" id="litBadge">Năm phụng vụ: -</div>
+          <div class="badge" id="easterBadge">Phục Sinh: -</div>
         </div>
 
-        <div class="tableWrap" id="tableWrap" style="display:block;">
-          <table id="feastTable">
-            <thead>
-              <tr>
-                <th class="col-season">Mùa / Chúa Nhật</th>
-                <th class="col-week">Tuần / Số</th>
-                <th class="col-date">Thứ - Ngày - Tháng</th>
-                <th class="col-name">Tên Lễ / Ghi chú</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
+        <div class="resultBox" id="resultBox" style="display: none">
+          <div class="resultMain">
+            <div>
+              <div class="big" id="easterLine"></div>
+              <div class="small" id="easterSub"></div>
+            </div>
+            <div>
+              <div class="small">
+                Tổng số mục: <span id="totalItems">0</span>
+              </div>
+            </div>
+          </div>
 
-        <div class="note">Ghi chú: Lễ Thăng Thiên đã chuyển về Chúa Nhật gần nhất (±42 ngày sau Phục Sinh) theo tuỳ chọn VN. Tất cả tính toán dùng thời điểm UTC để tránh sai lệch múi giờ.</div>
+          <div class="tableWrap" id="tableWrap" style="display: block">
+            <table id="feastTable">
+              <thead>
+                <tr>
+                  <th class="col-season">Mùa / Chúa Nhật</th>
+                  <th class="col-week">Tuần / Số</th>
+                  <th class="col-date">Thứ - Ngày - Tháng</th>
+                  <th class="col-name">Tên Lễ / Ghi chú</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <div class="note">
+            Ghi chú: Lễ Thăng Thiên đã chuyển về Chúa Nhật gần nhất (±42 ngày
+            sau Phục Sinh) theo tuỳ chọn VN. Tất cả tính toán dùng thời điểm UTC
+            để tránh sai lệch múi giờ.
+          </div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <script>
-    /* ============================
+    <script>
+      /* ============================
    Helper: date in UTC & utils
    ============================ */
-    function toUTC(y, m, d) {
-      return new Date(Date.UTC(y, m - 1, d));
-    }
+      function toUTC(y, m, d) {
+        return new Date(y, m - 1, d);
+      }
 
-    function formatDMY(d) {
-      return `${d.getUTCDate()}-${d.getUTCMonth()+1}-${d.getUTCFullYear()}`;
-    }
+      function formatDMY(d) {
+        return `${d.getDate()}-${d.getMonth() + 1}-${d.getFullYear()}`;
+      }
 
-    function utcYMDObj(y, m, d) {
-      return {
-        year: y,
-        month: m,
-        day: d
-      };
-    }
+      function dateToYMD(date = new Date()) {
+        return {
+          year: date.getFullYear(),
+          month: date.getMonth() + 1,
+          day: date.getDate(),
+        };
+      }
 
-    function ymdToDate(ymd) {
-      return toUTC(ymd.year, ymd.month, ymd.day);
-    }
+      function ymdToDate(ymd) {
+        return toUTC(ymd.year, ymd.month, ymd.day);
+      }
 
-    function addDaysDate(dateObj, n) {
-      const d = new Date(dateObj.getTime());
-      d.setUTCDate(d.getUTCDate() + n);
-      return d;
-    }
-    // n is number of days to add
-    function addDaysYMD(ymd, n) {
-      const dt = addDaysDate(ymdToDate(ymd), n);
-      return {
-        year: dt.getUTCFullYear(),
-        month: dt.getUTCMonth() + 1,
-        day: dt.getUTCDate()
-      };
-    }
+      function addDaysDate(dateObj, n) {
+        const d = new Date(dateObj.getTime());
+        d.setDate(d.getDate() + n);
+        return d;
+      }
 
-    function dowNameViFromDate(dateObj) {
-      const names = ["Chúa Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
-      return names[dateObj.getUTCDay()];
-    }
+      function minusDaysDate(dateObj, n) {
+        let d = new Date(dateObj);
 
-    /* ============================
+        return d;
+      }
+      // n is number of days to add
+      function addDaysYMD(ymd, n) {
+        const dt = addDaysDate(ymdToDate(ymd), n);
+        return {
+          year: dt.getFullYear(),
+          month: dt.getMonth() + 1,
+          day: dt.getDate(),
+        };
+      }
+
+      function minusDaysYMD(ymd, n) {
+        let dt = ymd;
+        dt.setDate(dt.getDate() - n);
+        return {
+          year: dt.getFullYear(),
+          month: dt.getMonth() + 1,
+          day: dt.getDate(),
+        };
+      }
+
+      function dowNameViFromDate(dateObj) {
+        const names = [
+          "Chúa Nhật",
+          "Thứ Hai",
+          "Thứ Ba",
+          "Thứ Tư",
+          "Thứ Năm",
+          "Thứ Sáu",
+          "Thứ Bảy",
+        ];
+        return names[dateObj.getDay()];
+      }
+
+      /* ============================
        Easter (Meeus-Jones-Butcher)
        valid 1583-4099
        ============================ */
-    function easterGregorian(year) {
-      if (!Number.isInteger(year)) throw new Error('Year must be integer');
-      if (year < 1583 || year > 4099) throw new Error('Year must be 1583..4099');
-      const a = year % 19;
-      const b = Math.floor(year / 100);
-      const c = year % 100;
-      const d = Math.floor(b / 4);
-      const e = b % 4;
-      const f = Math.floor((b + 8) / 25);
-      const g = Math.floor((b - f + 1) / 3);
-      const h = (19 * a + b - d - g + 15) % 30;
-      const i = Math.floor(c / 4);
-      const k = c % 4;
-      const l = (32 + 2 * e + 2 * i - h - k) % 7;
-      const m = Math.floor((a + 11 * h + 22 * l) / 451);
-      const n = h + l - 7 * m + 114;
-      const month = Math.floor(n / 31);
-      const day = (n % 31) + 1;
-      return {
-        year,
-        month,
-        day
-      };
-    }
+      function easterGregorian(year) {
+        if (!Number.isInteger(year)) throw new Error("Year must be integer");
+        if (year < 1583 || year > 4099)
+          throw new Error("Year must be 1583..4099");
+        const a = year % 19;
+        const b = Math.floor(year / 100);
+        const c = year % 100;
+        const d = Math.floor(b / 4);
+        const e = b % 4;
+        const f = Math.floor((b + 8) / 25);
+        const g = Math.floor((b - f + 1) / 3);
+        const h = (19 * a + b - d - g + 15) % 30;
+        const i = Math.floor(c / 4);
+        const k = c % 4;
+        const l = (32 + 2 * e + 2 * i - h - k) % 7;
+        const m = Math.floor((a + 11 * h + 22 * l) / 451);
+        const n = h + l - 7 * m + 114;
+        const month = Math.floor(n / 31);
+        const day = (n % 31) + 1;
+        return {
+          year,
+          month,
+          day,
+        };
+      }
 
-    /* ============================
+      /* ============================
        Liturgical utilities
        ============================ */
 
-    // First Sunday of Advent (CN I Mùa Vọng) for a liturgical year that begins in civil year (prevYear)
-    // Rule used: First Sunday of Advent is the Sunday between Nov 27 and Dec 3 inclusive of the previous calendar year.
-    // If we are given the liturgical year starting at Advent of (prevYear), compute that Advent Sunday.
-    function firstSundayOfAdvent(prevYear) {
-      // find date between Nov27 - Dec3 of prevYear that is Sunday (UTC)
-      for (let day = 27; day <= 3 + 30; day++) {
-        // careful: iterate calendar: Nov 27..Nov30 then Dec1..Dec3
-      }
-      // Simpler: test dates Nov27..Dec3
-      for (let d = 27; d <= 31; d++) {
-        const dt = toUTC(prevYear, 11, d); // month 11 = November
-        if (dt.getUTCDay() === 0) return {
+      // First Sunday of Advent (CN I Mùa Vọng) for a liturgical year that begins in civil year (prevYear)
+      // Rule used: First Sunday of Advent is the Sunday between Nov 27 and Dec 3 inclusive of the previous calendar year.
+      // If we are given the liturgical year starting at Advent of (prevYear), compute that Advent Sunday.
+      function firstSundayOfAdvent(prevYear) {
+        // find date between Nov27 - Dec3 of prevYear that is Sunday (UTC)
+        for (let day = 27; day <= 3 + 30; day++) {
+          // careful: iterate calendar: Nov 27..Nov30 then Dec1..Dec3
+        }
+        // Simpler: test dates Nov27..Dec3
+        for (let d = 27; d <= 31; d++) {
+          const dt = toUTC(prevYear, 11, d); // month 11 = November
+          if (dt.getDay() === 0)
+            return {
+              year: prevYear,
+              month: 11,
+              day: d,
+            };
+        }
+        for (let d = 1; d <= 3; d++) {
+          const dt = toUTC(prevYear, 12, d); // December
+          if (dt.getDay() === 0)
+            return {
+              year: prevYear,
+              month: 12,
+              day: d,
+            };
+        }
+        // fallback: find Sunday on or after Nov27
+        let test = toUTC(prevYear, 11, 27);
+        while (test.getMonth() === 11 && test.getDate() <= 31) {
+          if (test.getDay() === 0)
+            return {
+              year: test.getFullYear(),
+              month: test.getMonth() + 1,
+              day: test.getDate(),
+            };
+          test = addDaysDate(test, 1);
+        }
+        // final fallback: return Nov27
+        return {
           year: prevYear,
           month: 11,
-          day: d
+          day: 27,
         };
       }
-      for (let d = 1; d <= 3; d++) {
-        const dt = toUTC(prevYear, 12, d); // December
-        if (dt.getUTCDay() === 0) return {
-          year: prevYear,
-          month: 12,
-          day: d
-        };
-      }
-      // fallback: find Sunday on or after Nov27
-      let test = toUTC(prevYear, 11, 27);
-      while (test.getUTCMonth() === 11 && test.getUTCDate() <= 31) {
-        if (test.getUTCDay() === 0) return {
-          year: test.getUTCFullYear(),
-          month: test.getUTCMonth() + 1,
-          day: test.getUTCDate()
-        };
-        test = addDaysDate(test, 1);
-      }
-      // final fallback: return Nov27
-      return {
-        year: prevYear,
-        month: 11,
-        day: 27
-      };
-    }
 
-    // Given Easter YMD, compute standard movable feasts (as YMD objects)
-    function computeMovableFeasts(easter) {
-      // Offsets in days relative to Easter
-      const offsets = [{
-          name: 'Lễ Tro',
-          offset: -46
-        },
-        {
-          name: 'Chúa Nhật Lễ Lá (CN Tuần Thánh)',
-          offset: -7
-        },
-        {
-          name: 'Thứ Năm Tuần Thánh',
-          offset: -3
-        },
-        {
-          name: 'Thứ Sáu Tuần Thánh',
-          offset: -2
-        },
-        {
-          name: 'Thứ Bảy Tuần Thánh',
-          offset: -1
-        },
-        {
-          name: 'Lễ Phục Sinh',
-          offset: 0
-        },
-        // Lễ Thăng Thiên: per VN -> move to nearest Sunday after 39 -> +42
-        {
-          name: 'Lễ Thăng Thiên (Chuyển về Chúa Nhật)',
-          offset: 42
-        },
-        {
-          name: 'Chúa Thánh Thần Hiện Xuống (Lễ Hiện Xuống)',
-          offset: 49
-        },
-        {
-          name: 'Chúa Ba Ngôi',
-          offset: 56
-        },
-        {
-          name: 'Lễ Mình Máu Thánh Chúa',
-          offset: 60
-        },
-        {
-          name: 'Thánh Tâm Chúa Giêsu',
-          offset: 68
-        }
-      ];
-      return offsets.map(o => {
-        const d = addDaysYMD(easter, o.offset);
-        return {
-          name: o.name,
-          y: d.year,
-          m: d.month,
-          d: d.day
-        };
-      });
-    }
-
-    function holyFamilySunday(year) {
-      // Tìm Chúa Nhật trong khoảng 26/12 đến 31/12
-      for (let d = 26; d <= 31; d++) {
-        const dt = toUTC(year, 12, d);
-        if (dt.getUTCDay() === 0) {
+      // Given Easter YMD, compute standard movable feasts (as YMD objects)
+      function computeMovableFeasts(easter) {
+        // Offsets in days relative to Easter
+        const offsets = [
+          {
+            name: "Lễ Tro",
+            offset: -46,
+          },
+          {
+            name: "Chúa Nhật Lễ Lá (CN Tuần Thánh)",
+            offset: -7,
+          },
+          {
+            name: "Thứ Năm Tuần Thánh",
+            offset: -3,
+          },
+          {
+            name: "Thứ Sáu Tuần Thánh",
+            offset: -2,
+          },
+          {
+            name: "Thứ Bảy Tuần Thánh",
+            offset: -1,
+          },
+          {
+            name: "Lễ Phục Sinh",
+            offset: 0,
+          },
+          // Lễ Thăng Thiên: per VN -> move to nearest Sunday after 39 -> +42
+          {
+            name: "Lễ Thăng Thiên (Chuyển về Chúa Nhật)",
+            offset: 42,
+          },
+          {
+            name: "Chúa Thánh Thần Hiện Xuống (Lễ Hiện Xuống)",
+            offset: 49,
+          },
+          {
+            name: "Chúa Ba Ngôi",
+            offset: 56,
+          },
+          {
+            name: "Lễ Mình Máu Thánh Chúa",
+            offset: 60,
+          },
+          {
+            name: "Thánh Tâm Chúa Giêsu",
+            offset: 68,
+          },
+        ];
+        return offsets.map((o) => {
+          const d = addDaysYMD(easter, o.offset);
           return {
-            year,
-            month: 12,
-            day: d
+            name: o.name,
+            y: d.year,
+            m: d.month,
+            d: d.day,
           };
-        }
+        });
       }
-      // fallback: 30/12 nếu không có CN
-      return {
-        year,
-        month: 12,
-        day: 30
-      };
-    }
 
-    // Epiphany: usual practice — celebrate on the Sunday between Jan 2 and Jan 8 (inclusive).
-    function epiphanySunday(year) {
-      // find Sunday between Jan 2 and Jan 8 of calendar year
-      for (let d = 2; d <= 8; d++) {
-        const dt = toUTC(year, 1, d);
-        if (dt.getUTCDay() === 0) return {
+      function holyFamilySunday(year) {
+        // Tìm Chúa Nhật trong khoảng 26/12 đến 31/12
+        for (let d = 26; d <= 31; d++) {
+          const dt = toUTC(year, 12, d);
+          if (dt.getDay() === 0) {
+            return {
+              year,
+              month: 12,
+              day: d,
+            };
+          }
+        }
+        // fallback: 30/12 nếu không có CN
+        return {
+          year,
+          month: 12,
+          day: 30,
+        };
+      }
+
+      // Epiphany: usual practice — celebrate on the Sunday between Jan 2 and Jan 8 (inclusive).
+      function epiphanySunday(year) {
+        // find Sunday between Jan 2 and Jan 8 of calendar year
+        for (let d = 2; d <= 8; d++) {
+          const dt = toUTC(year, 1, d);
+          if (dt.getDay() === 0)
+            return {
+              year,
+              month: 1,
+              day: d,
+            };
+        }
+        // fallback: Jan6
+        return {
           year,
           month: 1,
-          day: d
+          day: 6,
         };
       }
-      // fallback: Jan6
-      return {
-        year,
-        month: 1,
-        day: 6
-      };
-    }
 
-    // Baptism of the Lord: the Sunday after Epiphany (or Jan 13 if Epiphany celebrated earlier) — we take the Sunday after Epiphany.
-    function baptismOfTheLord(epiphany) {
-      const dt = toUTC(epiphany.year, epiphany.month, epiphany.day);
-      const nextSun = addDaysDate(dt, 7);
-      return {
-        year: nextSun.getUTCFullYear(),
-        month: nextSun.getUTCMonth() + 1,
-        day: nextSun.getUTCDate()
-      };
-    }
-
-    // Helper: next Sunday on or after date
-    function nextSundayOnOrAfter(ymd) {
-      let dt = toUTC(ymd.year, ymd.month, ymd.day);
-      while (dt.getUTCDay() !== 0) {
-        dt = addDaysDate(dt, 1);
+      // Baptism of the Lord: the Sunday after Epiphany (or Jan 13 if Epiphany celebrated earlier) — we take the Sunday after Epiphany.
+      function baptismOfTheLord(epiphany) {
+        const dt = toUTC(epiphany.year, epiphany.month, epiphany.day);
+        const nextSun = addDaysDate(dt, 7);
+        return {
+          year: nextSun.getFullYear(),
+          month: nextSun.getMonth() + 1,
+          day: nextSun.getDate(),
+        };
       }
-      return {
-        year: dt.getUTCFullYear(),
-        month: dt.getUTCMonth() + 1,
-        day: dt.getUTCDate()
-      };
-    }
-    // Helper: previous Sunday on or before date
-    function prevSundayOnOrBefore(ymd) {
-      let dt = toUTC(ymd.year, ymd.month, ymd.day);
-      while (dt.getUTCDay() !== 0) {
-        dt = addDaysDate(dt, -1);
-      }
-      return {
-        year: dt.getUTCFullYear(),
-        month: dt.getUTCMonth() + 1,
-        day: dt.getUTCDate()
-      };
-    }
 
-    /* ============================
+      // Helper: next Sunday on or after date
+      function nextSundayOnOrAfter(ymd) {
+        let dt = toUTC(ymd.year, ymd.month, ymd.day);
+        while (dt.getDay() !== 0) {
+          dt = addDaysDate(dt, 1);
+        }
+        return {
+          year: dt.getFullYear(),
+          month: dt.getMonth() + 1,
+          day: dt.getDate(),
+        };
+      }
+      // Helper: previous Sunday on or before date
+      function prevSundayOnOrBefore(ymd) {
+        let dt = toUTC(ymd.year, ymd.month, ymd.day);
+        while (dt.getDay() !== 0) {
+          dt = addDaysDate(dt, -1);
+        }
+        return {
+          year: dt.getFullYear(),
+          month: dt.getMonth() + 1,
+          day: dt.getDate(),
+        };
+      }
+
+      /* ============================
        Build full liturgical year sequence
        Input: civil year (year of Easter)
        Output: array of items {season, sundayName, weekNumber, y,m,d, label}
        ============================ */
-    function buildLiturgicalYearForEasterYear(easterYear) {
-      // The liturgical year that contains EasterYear begins on the First Sunday of Advent of (easterYear - 1)
-      const prevYear = easterYear - 1;
-      const adventStart = firstSundayOfAdvent(prevYear); // CN I Mùa Vọng
-      // We'll produce list from adventStart (inclusive) up to day before next adventStart (i.e., next year's first advent)
-      const nextAdventStart = firstSundayOfAdvent(easterYear);
+      function buildLiturgicalYearForEasterYear(easterYear) {
+        // The liturgical year that contains EasterYear begins on the First Sunday of Advent of (easterYear - 1)
+        const prevYear = easterYear - 1;
+        const adventStart = firstSundayOfAdvent(prevYear); // CN I Mùa Vọng
+        // We'll produce list from adventStart (inclusive) up to day before next adventStart (i.e., next year's first advent)
+        const nextAdventStart = firstSundayOfAdvent(easterYear);
 
-      // Easter (civil)
-      const easter = easterGregorian(easterYear); // {year,month,day}
-      const easterDate = toUTC(easter.year, easter.month, easter.day);
+        // Easter (civil)
+        const easter = easterGregorian(easterYear); // {year,month,day}
+        const easterDate = toUTC(easter.year, easter.month, easter.day);
 
-      // Fixed feasts in Christmas season
-      const christmas = {
-        year: prevYear + 1,
-        month: 12,
-        day: 25
-      }; // Dec 25 of prevYear+1? Wait: careful
-      // Actually christmas belongs to calendar year prevYear+1? Example: if easterYear=2026, prevYear=2025, adventStart in 2025 Nov.., Christmas is Dec 25, 2025
-      const christmasYMD = {
-        year: prevYear,
-        month: 12,
-        day: 25
-      };
-      // Correction: adventStart uses prevYear. If prevYear = easterYear-1, Advent in prevYear (Nov/Dec prevYear). Christmas is Dec 25 of prevYear.
-      // So keep christmasYMD as {prevYear,12,25}
-      const christmasDate = toUTC(christmasYMD.year, christmasYMD.month, christmasYMD.day);
+        // Fixed feasts in Christmas season
+        const christmas = {
+          year: prevYear + 1,
+          month: 12,
+          day: 25,
+        }; // Dec 25 of prevYear+1? Wait: careful
+        // Actually christmas belongs to calendar year prevYear+1? Example: if easterYear=2026, prevYear=2025, adventStart in 2025 Nov.., Christmas is Dec 25, 2025
+        const christmasYMD = {
+          year: prevYear,
+          month: 12,
+          day: 25,
+        };
+        // Correction: adventStart uses prevYear. If prevYear = easterYear-1, Advent in prevYear (Nov/Dec prevYear). Christmas is Dec 25 of prevYear.
+        // So keep christmasYMD as {prevYear,12,25}
+        const christmasDate = toUTC(
+          christmasYMD.year,
+          christmasYMD.month,
+          christmasYMD.day
+        );
 
-      // Epiphany and Baptism: epiphany in calendar year = next calendar year after adventStart (i.e., prevYear+1) ??? Need clarity:
-      // The liturgical year starting in Advent prevYear has Christmas on prevYear Dec 25, and Epiphany on following January (prevYear+1)
-      const holyFamily = holyFamilySunday(christmasDate.getUTCFullYear());; // Dec 26 of prevYear+1 (i.e., next calendar year)
-      const epiphany = epiphanySunday(prevYear + 1);
-      const baptism = baptismOfTheLord(epiphany);
+        // Epiphany and Baptism: epiphany in calendar year = next calendar year after adventStart (i.e., prevYear+1) ??? Need clarity:
+        // The liturgical year starting in Advent prevYear has Christmas on prevYear Dec 25, and Epiphany on following January (prevYear+1)
+        const holyFamily = holyFamilySunday(christmasDate.getFullYear()); // Dec 26 of prevYear+1 (i.e., next calendar year)
+        const epiphany = epiphanySunday(prevYear + 1);
+        const baptism = baptismOfTheLord(epiphany);
 
-      // Ash Wednesday = Easter - 46
-      const ash = addDaysYMD(easter, -46);
+        // Ash Wednesday = Easter - 46
+        const ash = addDaysYMD(easter, -46);
 
-      // First Sunday of Lent = next Sunday on or after Ash Wednesday (often immediate Sunday after Ash Wed)
-      const firstSunOfLent = nextSundayOnOrAfter(ash);
+        // First Sunday of Lent = next Sunday on or after Ash Wednesday (often immediate Sunday after Ash Wed)
+        const firstSunOfLent = nextSundayOnOrAfter(ash);
 
-      // Palm Sunday = Easter -7
-      const palm = addDaysYMD(easter, -7);
-      // Holy Thursday, Good Friday, Holy Saturday
-      const holyThursday = addDaysYMD(easter, -3);
-      const goodFriday = addDaysYMD(easter, -2);
-      const holySaturday = addDaysYMD(easter, -1);
+        // Palm Sunday = Easter -7
+        const palm = addDaysYMD(easter, -7);
+        // Holy Thursday, Good Friday, Holy Saturday
+        const holyThursday = addDaysYMD(easter, -3);
+        const goodFriday = addDaysYMD(easter, -2);
+        const holySaturday = addDaysYMD(easter, -1);
 
-      // Ascension: in VN -> Sunday near +42
-      const ascension = addDaysYMD(easter, 42);
-      const pentecost = addDaysYMD(easter, 49);
-      const trinity = addDaysYMD(easter, 56);
-      const corpus = addDaysYMD(easter, 60);
-      const sacredHeart = addDaysYMD(easter, 68);
+        // Ascension: in VN -> Sunday near +42
+        const ascension = addDaysYMD(easter, 42);
+        const pentecost = addDaysYMD(easter, 49);
+        const trinity = addDaysYMD(easter, 56);
+        const corpus = addDaysYMD(easter, 60);
+        const sacredHeart = addDaysYMD(easter, 68);
 
-      // Christ the King: the Sunday immediately before the next Advent start
-      // find prev Sunday on or before day before nextAdventStart
-      const dayBeforeNextAdventDate = addDaysDate(toUTC(nextAdventStart.year, nextAdventStart.month, nextAdventStart.day), -1);
-      const christTheKingDate = prevSundayOnOrBefore({
-        year: dayBeforeNextAdventDate.getUTCFullYear(),
-        month: dayBeforeNextAdventDate.getUTCMonth() + 1,
-        day: dayBeforeNextAdventDate.getUTCDate()
-      });
-
-      // Build series of Sundays
-      const items = [];
-
-      // Helper to push an item
-      function pushItem(season, sundayName, weekNumber, ymd, label) {
-        items.push({
-          season,
-          sundayName,
-          weekNumber,
-          y: ymd.year,
-          m: ymd.month,
-          d: ymd.day,
-          label
+        // Christ the King: the Sunday immediately before the next Advent start
+        // find prev Sunday on or before day before nextAdventStart
+        const dayBeforeNextAdventDate = addDaysDate(
+          toUTC(
+            nextAdventStart.year,
+            nextAdventStart.month,
+            nextAdventStart.day
+          ),
+          -1
+        );
+        const christTheKingDate = prevSundayOnOrBefore({
+          year: dayBeforeNextAdventDate.getFullYear(),
+          month: dayBeforeNextAdventDate.getMonth() + 1,
+          day: dayBeforeNextAdventDate.getDate(),
         });
+
+        // Build series of Sundays
+        const items = [];
+
+        // Helper to push an item
+        function pushItem(sundayName, weekNumber, ymd, label, prority = 0) {
+          if (prority === 1) {
+            let dayFeast = items.find(
+              (i) => i.m === ymd.month && i.d === ymd.day
+            );
+            if (dayFeast) {
+              dayFeast.sundayName = sundayName;
+              dayFeast.weekNumber = weekNumber;
+              return;
+            }
+          }
+          items.push({
+            sundayName,
+            weekNumber,
+            y: ymd.year,
+            m: ymd.month,
+            d: ymd.day,
+            label,
+          });
+        }
+
+        // 1) MÙA VỌNG — CN I -> CN IV (4 Sundays)
+        // Start at adventStart; list 4 consecutive Sundays (adventStart + 0, +7, +14, +21)
+        for (let i = 0; i < 4; i++) {
+          const dt = addDaysYMD(adventStart, i * 7);
+          const name = `Chúa Nhật ${Roman(i + 1)} Mùa Vọng`;
+          pushItem(
+            name,
+            i + 1,
+            dt,
+            i === 3 ? "CN IV Mùa Vọng (CN Gaudete nếu thích)" : ""
+          );
+        }
+
+        // 2) GIÁNG SINH SEASON: Christmas (25/12), then Sundays of Christmas season:
+        // We'll include: Lễ Giáng Sinh (25/12), Chúa Nhật trong Giáng Sinh (CN after Christmas) up to Epiphany/Baptism
+        // For simplicity, include Christmas day (as special) and any Sundays between Dec25 and Epiphany (inclusive).
+        // Add Christmas day as a special "Lễ Giáng Sinh"
+
+        // Giáng Sinh (25/12)
+
+        // Add Sundays from the Sunday on/after Dec25 up to (and including) Baptism of the Lord's Sunday
+        // find first Sunday on or after Dec25 of prevYear
+        const firstSunAfterChristmas = nextSundayOnOrAfter(christmasYMD);
+        // iterate Sundays until baptism (inclusive)
+        let cur = firstSunAfterChristmas;
+        let weekCount = 1;
+        while (true) {
+          // stop if cur is after baptism
+          const curDate = toUTC(cur.year, cur.month, cur.day);
+          const bapDate = toUTC(baptism.year, baptism.month, baptism.day);
+          if (curDate.getTime() > bapDate.getTime()) break;
+          const name = `Chúa Nhật ${Roman(weekCount)} Mùa Giáng Sinh`;
+          pushItem(name, weekCount, cur, "");
+          cur = addDaysYMD(cur, 7);
+          weekCount++;
+        }
+
+        pushItem(
+          "Giáng Sinh (Lễ Chúa Giáng Sinh)",
+          null,
+          christmasYMD,
+          "Lễ Trọng Mừng Chúa Giáng Sinh",
+          1
+        );
+        pushItem(
+          "Lễ Thánh Gia (Thánh Gia Giêsu, Maria, Giuse)",
+          null,
+          holyFamily,
+          "Sau lễ Giáng Sinh",
+          1
+        );
+        pushItem(
+          "Lễ Chúa Hiển Linh",
+          null,
+          epiphany,
+          "Lễ Trọng Mừng Chúa Hiển Linh",
+          1
+        );
+        pushItem(
+          "Lễ Chúa Giêsu chịu phép rửa",
+          null,
+          baptism,
+          "Lễ Trọng Mừng Chúa Giêsu chịu phép rửa",
+          1
+        )
+
+        // 3) MÙA THỨNG NIEN: CN I Mùa Thường Niên -> CN VII Mùa Thường Niên (thường 7 CN, tuỳ năm)
+        // First Sunday of Ordination is 7 days after Baptism
+        let weekCountOrdinary = 2;
+        let curOrd = addDaysYMD(baptism, 7);
+        while (true) {
+          const curDate = toUTC(curOrd.year, curOrd.month, curOrd.day);
+          const ashDate = toUTC(ash.year, ash.month, ash.day);
+          if (curDate.getTime() >= ashDate.getTime()) break;
+          const name = `Chúa Nhật ${Roman(weekCountOrdinary)} Mùa Thường Niên`;
+          pushItem(name, weekCountOrdinary, curOrd, "", 0);
+          curOrd = addDaysYMD(curOrd, 7);
+          weekCountOrdinary++;
+          // safety limit
+          if (weekCountOrdinary > 10) break;
+        }
+
+        // 4) MÙA CHAY: CN I Mùa Chay -> CN VI Mùa Chay (thường 6 CN, tuỳ năm)
+        // First Sunday of Lent is nextSundayOnOrAfter(ash)
+
+        pushItem(
+          "Thứ Tư Lễ Tro",
+          null,
+          ash,
+          "Thứ Tư Lễ Tro - Bắt đầu mùa Chay",
+          1
+        );
+
+        let curLent = nextSundayOnOrAfter(ash);
+        weekCount = 1;
+        while (true) {
+          const curDate = toUTC(curLent.year, curLent.month, curLent.day);
+          // stop when curLent >= Palm Sunday
+          const palmDate = toUTC(palm.year, palm.month, palm.day);
+          if (curDate.getTime() >= palmDate.getTime()) break;
+          const name = `Chúa Nhật ${Roman(weekCount)} Mùa Chay`;
+          pushItem(name, weekCount, curLent, "");
+          curLent = addDaysYMD(curLent, 7);
+          weekCount++;
+          if (weekCount > 6) break;
+        }
+
+        // Add Palm Sunday and Holy Week entries
+        pushItem("Chúa Nhật Lễ Lá (CN Tuần Thánh)", null, palm, "Bắt đầu Tuần Thánh");
+        pushItem(
+          "Thứ Năm Tuần Thánh (Tiệc Ly)",
+          null,
+          holyThursday,
+          "Tuần Thánh"
+        );
+        pushItem(
+          "Thứ Sáu Tuần Thánh (Đóng Đinh)",
+          null,
+          goodFriday,
+          "Tuần Thánh"
+        );
+        pushItem(
+          "Thứ Bảy Tuần Thánh (Canh Thức Phục Sinh)",
+          null,
+          holySaturday,
+          "Tuần Thánh"
+        );
+
+        // 5) PHỤC SINH & MÙA PHỤC SINH
+        pushItem("Lễ Phục Sinh", 1, easter, "");
+        // After Easter, list Sundays of Easter season until Pentecost (7 weeks including Easter)
+        let curEasterSun = easter; // Easter Sunday is week 1
+        for (let w = 2; w <= 7; w++) {
+          // Easter + 0..6 full weeks -> Pentecost is after 7 weeks (49 days)
+          const dt = addDaysYMD(easter, (w - 1) * 7);
+          const name =
+            w === 1
+              ? `Chúa Nhật Phục Sinh`
+              : `Chúa Nhật ${Roman(w)} Mùa Phục Sinh`;
+          pushItem(name, w, dt, "");
+        }
+
+        pushItem(
+          "Lễ Thăng Thiên",
+          null,
+          ascension,
+          "Chúa Giêsu Lên Trời",
+          1
+        );
+
+        // 6) THỜI GIAN THƯỜNG NIÊN SAU PENTECOST -> until Christ the King (last Sunday before next Advent)
+        // Start at first Sunday after Pentecost
+
+
+        let curOrdPost = pentecost;
+        weekCountOrdinary = 34;
+        let curDate = toUTC(curOrdPost.year, curOrdPost.month, curOrdPost.day);
+        let christDate = toUTC(
+          christTheKingDate.year,
+          christTheKingDate.month,
+          christTheKingDate.day
+        );
+        while (true) {
+          if (christDate.getTime().toString() <= curDate.getTime()) break;
+          const name = `Chúa Nhật ${Roman(weekCountOrdinary)} Mùa Thường Niên`;
+
+          pushItem(name, weekCountOrdinary, dateToYMD(christDate), name);
+          let timeLine = minusDaysYMD(christDate, 7);
+
+          christDate = toUTC(timeLine.year, timeLine.month, timeLine.day);
+
+          weekCountOrdinary--;
+          if (weekCountOrdinary == 8) break;
+        }
+
+        // Pentecost Sunday
+        pushItem("Chúa Nhật Lễ Hiện Xuống (Pentecost)", null, pentecost, "", 1);
+
+        // Trinity Sunday (CN sau Hiện Xuống)
+        pushItem("Chúa Nhật Lễ Chúa Ba Ngôi", null, trinity, "", 1);
+
+        // Corpus Christi (Mình Máu Thánh)
+        pushItem("Lễ Mình Máu Thánh Chúa", null, corpus, "");
+
+        // Sacred Heart (Thánh Tâm)
+        pushItem("Lễ Thánh Tâm Chúa Giêsu", null, sacredHeart, "");
+        // Add Christ the King
+        pushItem(
+          "Chúa Nhật XXXIV Thường Niên Lễ Chúa Kitô Vua Vũ Trụ (Christ the King)",
+          34,
+          christTheKingDate,
+          "Kết thúc Năm Phụng Vụ",
+          1
+        );
+
+        // Sort items chronologically (from adventStart up to day before nextAdventStart)
+        items.sort((A, B) => {
+          const a = toUTC(A.y, A.m, A.d).getTime();
+          const b = toUTC(B.y, B.m, B.d).getTime();
+          return a - b;
+        });
+
+        // Filter to the liturgical year interval [adventStart, dayBeforeNextAdvent)
+        const startMillis = toUTC(
+          adventStart.year,
+          adventStart.month,
+          adventStart.day
+        ).getTime();
+        const endMillis = toUTC(
+          nextAdventStart.year,
+          nextAdventStart.month,
+          nextAdventStart.day
+        ).getTime();
+        const filtered = items.filter((it) => {
+          const t = toUTC(it.y, it.m, it.d).getTime();
+          return t >= startMillis && t < endMillis;
+        });
+
+        console.log(items);
+
+        // Return structure plus metadata
+        return {
+          adventStart,
+          nextAdventStart,
+          easter,
+          items: filtered,
+          epiphany,
+          holyFamily,
+          baptism,
+          ash,
+          palm,
+          holyThursday,
+          goodFriday,
+          holySaturday,
+          ascension,
+          pentecost,
+          trinity,
+          corpus,
+          sacredHeart,
+          christTheKingDate,
+        };
       }
 
-      // 1) MÙA VỌNG — CN I -> CN IV (4 Sundays)
-      // Start at adventStart; list 4 consecutive Sundays (adventStart + 0, +7, +14, +21)
-      for (let i = 0; i < 4; i++) {
-        const dt = addDaysYMD(adventStart, i * 7);
-        const name = `Chúa Nhật ${Roman(i+1)} Mùa Vọng`;
-        pushItem('Mùa Vọng', name, i + 1, dt, (i === 3 ? 'CN IV Mùa Vọng (CN Gaudete nếu thích)' : ''));
-      }
-
-      // 2) GIÁNG SINH SEASON: Christmas (25/12), then Sundays of Christmas season:
-      // We'll include: Lễ Giáng Sinh (25/12), Chúa Nhật trong Giáng Sinh (CN after Christmas) up to Epiphany/Baptism
-      // For simplicity, include Christmas day (as special) and any Sundays between Dec25 and Epiphany (inclusive).
-      // Add Christmas day as a special "Lễ Giáng Sinh"
-      pushItem('Mùa Giáng Sinh', 'Giáng Sinh (Lễ Chúa Giáng Sinh)', null, christmasYMD, '25/12');
-      // Giáng Sinh (25/12)
-      pushItem('Mùa Giáng Sinh', 'Lễ Thánh Gia (Thánh Gia Giêsu, Maria, Giuse)', null, holyFamily, 'Sau lễ Giáng Sinh');
-      // Add Sundays from the Sunday on/after Dec25 up to (and including) Baptism of the Lord's Sunday
-      // find first Sunday on or after Dec25 of prevYear
-      const firstSunAfterChristmas = nextSundayOnOrAfter(christmasYMD);
-      // iterate Sundays until baptism (inclusive)
-      let cur = firstSunAfterChristmas;
-      let weekCount = 1;
-      while (true) {
-        // stop if cur is after baptism
-        const curDate = toUTC(cur.year, cur.month, cur.day);
-        const bapDate = toUTC(baptism.year, baptism.month, baptism.day);
-        if (curDate.getTime() > bapDate.getTime()) break;
-        const name = `Chúa Nhật ${Roman(weekCount)} Mùa Giáng Sinh`;
-        pushItem('Mùa Giáng Sinh', name, weekCount, cur, '');
-        cur = addDaysYMD(cur, 7);
-        weekCount++;
-      }
-
-      // 3) THỜI GIAN THƯỜNG NIÊN (trước Mùa Chay): from the day after Baptism up to the day before Ash Wed
-      // Sundays in Ordinary Time before Lent are counted: start at the Sunday after Baptism (i.e., baptism +7) and continue while < Ash Wednesday
-      let ordPreStart = addDaysYMD(baptism, 7); // first Sunday after Baptism
-      // But if Baptism is same as Epiphany etc, ensure start is first Sunday after Baptism (we used)
-      weekCount = 1;
-      let curOrd = ordPreStart;
-      while (true) {
-        const curDate = toUTC(curOrd.year, curOrd.month, curOrd.day);
-        const ashDate = toUTC(ash.year, ash.month, ash.day);
-        if (curDate.getTime() >= ashDate.getTime()) break;
-        const name = `Chúa Nhật ${Roman(weekCount)} Mùa Thường Niên (Trước Mùa Chay)`;
-        pushItem('Thường Niên', name, weekCount, curOrd, '');
-        curOrd = addDaysYMD(curOrd, 7);
-        weekCount++;
-        // safety limit
-        if (weekCount > 35) break;
-      }
-
-      // 4) MÙA CHAY: CN I Mùa Chay -> CN VI Mùa Chay (thường 6 CN, tuỳ năm)
-      // First Sunday of Lent is nextSundayOnOrAfter(ash)
-      let curLent = nextSundayOnOrAfter(ash);
-      weekCount = 1;
-      while (true) {
-        const curDate = toUTC(curLent.year, curLent.month, curLent.day);
-        // stop when curLent >= Palm Sunday
-        const palmDate = toUTC(palm.year, palm.month, palm.day);
-        if (curDate.getTime() > palmDate.getTime()) break;
-        const name = `Chúa Nhật ${Roman(weekCount)} Mùa Chay`;
-        pushItem('Mùa Chay', name, weekCount, curLent, '');
-        curLent = addDaysYMD(curLent, 7);
-        weekCount++;
-        if (weekCount > 10) break;
-      }
-
-      // Add Palm Sunday and Holy Week entries
-      pushItem('Tuần Thánh', 'Chúa Nhật Lễ Lá (CN Tuần Thánh)', null, palm, '');
-      pushItem('Tuần Thánh', 'Thứ Năm Tuần Thánh (Tiệc Ly)', null, holyThursday, '');
-      pushItem('Tuần Thánh', 'Thứ Sáu Tuần Thánh (Đóng Đinh)', null, goodFriday, '');
-      pushItem('Tuần Thánh', 'Thứ Bảy Tuần Thánh (Canh Thức Phục Sinh)', null, holySaturday, '');
-
-      // 5) PHỤC SINH & MÙA PHỤC SINH
-      pushItem('Mùa Phục Sinh', 'Lễ Phục Sinh', null, easter, '');
-      // After Easter, list Sundays of Easter season until Pentecost (7 weeks including Easter)
-      let curEasterSun = easter; // Easter Sunday is week 1
-      for (let w = 1; w <= 7; w++) { // Easter + 0..6 full weeks -> Pentecost is after 7 weeks (49 days)
-        const dt = addDaysYMD(easter, (w - 1) * 7);
-        const name = w === 1 ? `Chúa Nhật Phục Sinh` : `Chúa Nhật ${Roman(w)} Mùa Phục Sinh`;
-        pushItem('Mùa Phục Sinh', name, w, dt, '');
-      }
-
-      // Pentecost Sunday
-      pushItem('Mùa Phục Sinh', 'Chúa Nhật Lễ Hiện Xuống (Pentecost)', null, pentecost, '');
-
-      // Trinity Sunday (CN sau Hiện Xuống)
-      pushItem('Mùa Phục Sinh', 'Chúa Nhật Lễ Chúa Ba Ngôi', null, trinity, '');
-
-      // Corpus Christi (Mình Máu Thánh)
-      pushItem('Mùa Phục Sinh', 'Lễ Mình Máu Thánh Chúa', null, corpus, '');
-
-      // Sacred Heart (Thánh Tâm)
-      pushItem('Mùa Phục Sinh', 'Lễ Thánh Tâm Chúa Giêsu', null, sacredHeart, '');
-
-      // 6) THỜI GIAN THƯỜNG NIÊN SAU PENTECOST -> until Christ the King (last Sunday before next Advent)
-      // Start at first Sunday after Pentecost
-      let ordPostStart = addDaysYMD(pentecost, 7);
-      weekCount = 1;
-      let curOrdPost = ordPostStart;
-      while (true) {
-        const curDate = toUTC(curOrdPost.year, curOrdPost.month, curOrdPost.day);
-        const christDate = toUTC(christTheKingDate.year, christTheKingDate.month, christTheKingDate.day);
-        if (curDate.getTime() > christDate.getTime()) break;
-        const name = `Chúa Nhật ${Roman(weekCount)} Mùa Thường Niên (Sau Phục Sinh)`;
-        pushItem('Thường Niên', name, weekCount, curOrdPost, '');
-        curOrdPost = addDaysYMD(curOrdPost, 7);
-        weekCount++;
-        if (weekCount > 40) break;
-      }
-
-      // Add Christ the King
-      pushItem('Kết thúc Năm Phụng Vụ', 'Chúa Nhật Lễ Chúa Kitô Vua Vũ Trụ (Christ the King)', null, christTheKingDate, '');
-
-      // Sort items chronologically (from adventStart up to day before nextAdventStart)
-      items.sort((A, B) => {
-        const a = toUTC(A.y, A.m, A.d).getTime();
-        const b = toUTC(B.y, B.m, B.d).getTime();
-        return a - b;
-      });
-
-      // Filter to the liturgical year interval [adventStart, dayBeforeNextAdvent)
-      const startMillis = toUTC(adventStart.year, adventStart.month, adventStart.day).getTime();
-      const endMillis = toUTC(nextAdventStart.year, nextAdventStart.month, nextAdventStart.day).getTime();
-      const filtered = items.filter(it => {
-        const t = toUTC(it.y, it.m, it.d).getTime();
-        return t >= startMillis && t < endMillis;
-      });
-
-      // Return structure plus metadata
-      return {
-        adventStart,
-        nextAdventStart,
-        easter,
-        items: filtered,
-        epiphany,
-        holyFamily,
-        baptism,
-        ash,
-        palm,
-        holyThursday,
-        goodFriday,
-        holySaturday,
-        ascension,
-        pentecost,
-        trinity,
-        corpus,
-        sacredHeart,
-        christTheKingDate
-      };
-    }
-
-    /* ============================
+      /* ============================
        Roman numeral helper for CN I, II, III, IV...
        ============================ */
-    function Roman(n) {
-      const romans = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X',
-        'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX', 'XX', 'XXI', 'XXII', 'XXIII', 'XXIV', 'XXV', 'XXVI', 'XXVII', 'XXVIII', 'XXIX', 'XXX', 'XXXI', 'XXXII', 'XXXIII', 'XXXIV'
-      ];
-      return romans[n] || n.toString();
-    }
+      function Roman(n) {
+        const romans = [
+          "",
+          "I",
+          "II",
+          "III",
+          "IV",
+          "V",
+          "VI",
+          "VII",
+          "VIII",
+          "IX",
+          "X",
+          "XI",
+          "XII",
+          "XIII",
+          "XIV",
+          "XV",
+          "XVI",
+          "XVII",
+          "XVIII",
+          "XIX",
+          "XX",
+          "XXI",
+          "XXII",
+          "XXIII",
+          "XXIV",
+          "XXV",
+          "XXVI",
+          "XXVII",
+          "XXVIII",
+          "XXIX",
+          "XXX",
+          "XXXI",
+          "XXXII",
+          "XXXIII",
+          "XXXIV",
+        ];
+        return romans[n] || n.toString();
+      }
 
-    /* ============================
+      /* ============================
        Render functions (UI)
        ============================ */
-    function renderLiturgicalTable(result) {
-      const tbody = document.querySelector('#feastTable tbody');
-      tbody.innerHTML = '';
-      result.items.forEach(it => {
-        const row = document.createElement('tr');
-        const seasonTd = document.createElement('td');
-        seasonTd.className = 'col-season';
-        seasonTd.textContent = it.season + (it.sundayName ? ` • ${it.sundayName}` : '');
-        const weekTd = document.createElement('td');
-        weekTd.className = 'col-week';
-        weekTd.textContent = it.weekNumber ? String(it.weekNumber) : '';
-        const dateTd = document.createElement('td');
-        dateTd.className = 'col-date';
-        const dt = toUTC(it.y, it.m, it.d);
-        dateTd.textContent = `${dowNameViFromDate(dt)} - ${it.d} - ${it.m}`;
-        const nameTd = document.createElement('td');
-        nameTd.className = 'col-name';
-        nameTd.textContent = it.label || it.sundayName || it.season;
-        row.appendChild(seasonTd);
-        row.appendChild(weekTd);
-        row.appendChild(dateTd);
-        row.appendChild(nameTd);
-        tbody.appendChild(row);
-      });
-      document.getElementById('totalItems').textContent = result.items.length;
-    }
+      function renderLiturgicalTable(result) {
+        const tbody = document.querySelector("#feastTable tbody");
+        tbody.innerHTML = "";
+        result.items.forEach((it) => {
+          const row = document.createElement("tr");
+          const seasonTd = document.createElement("td");
+          seasonTd.className = "col-season";
+          seasonTd.textContent = `${it.sundayName}`;
+          const weekTd = document.createElement("td");
+          weekTd.className = "col-week";
+          weekTd.textContent = it.weekNumber ? String(it.weekNumber) : ".";
+          const dateTd = document.createElement("td");
+          dateTd.className = "col-date";
+          const dt = toUTC(it.y, it.m, it.d);
+          dateTd.textContent = `${dowNameViFromDate(dt)} - ${it.d} - ${it.m}`;
+          const nameTd = document.createElement("td");
+          nameTd.className = "col-name";
+          nameTd.textContent = it.label || it.sundayName || it.season;
+          row.appendChild(seasonTd);
+          row.appendChild(weekTd);
+          row.appendChild(dateTd);
+          row.appendChild(nameTd);
+          tbody.appendChild(row);
+        });
+        document.getElementById("totalItems").textContent = result.items.length;
+      }
 
-    /* ============================
+      /* ============================
        Main: wire up UI
        ============================ */
-    document.getElementById('calcBtn').addEventListener('click', () => {
-      const input = document.getElementById('yearInput');
-      const val = parseInt(input.value, 10);
-      if (isNaN(val) || val < 1583 || val > 4099) {
-        alert('Vui lòng nhập năm hợp lệ (1583–4099).');
-        return;
-      }
+      document.getElementById("calcBtn").addEventListener("click", () => {
+        const input = document.getElementById("yearInput");
+        const val = parseInt(input.value, 10);
+        if (isNaN(val) || val < 1583 || val > 4099) {
+          alert("Vui lòng nhập năm hợp lệ (1583–4099).");
+          return;
+        }
 
-      // Build liturgical year relative to Easter in val
-      const built = buildLiturgicalYearForEasterYear(val);
+        // Build liturgical year relative to Easter in val
+        const built = buildLiturgicalYearForEasterYear(val);
 
-      // Easter display
-      const easter = built.easter;
-      const easterDate = toUTC(easter.year, easter.month, easter.day);
-      const dow = dowNameViFromDate(easterDate);
-      const easterLine = `${dow} - ${easter.day} - ${easter.month} - Lễ Phục Sinh`;
-      document.getElementById('easterLine').textContent = easterLine;
-      document.getElementById('easterSub').textContent = `Dân dụng (dd/mm/yyyy): ${String(easter.day).padStart(2,'0')}/${String(easter.month).padStart(2,'0')}/${easter.year}`;
-      document.getElementById('easterBadge').textContent = `Phục Sinh: ${easter.day}-${easter.month}-${easter.year}`;
+        // Easter display
+        const easter = built.easter;
+        const easterDate = toUTC(easter.year, easter.month, easter.day);
+        const dow = dowNameViFromDate(easterDate);
+        const easterLine = `${dow} - ${easter.day} - ${easter.month} - Lễ Phục Sinh`;
+        document.getElementById("easterLine").textContent = easterLine;
+        document.getElementById(
+          "easterSub"
+        ).textContent = `Dân dụng (dd/mm/yyyy): ${String(easter.day).padStart(
+          2,
+          "0"
+        )}/${String(easter.month).padStart(2, "0")}/${easter.year}`;
+        document.getElementById(
+          "easterBadge"
+        ).textContent = `Phục Sinh: ${easter.day}-${easter.month}-${easter.year}`;
 
-      // Liturgical year letter A/B/C: compute based on Easter year as earlier: N = year - 1; MAP[N % 3] => A,B,C
-      const map = ['A', 'B', 'C'];
-      const letter = map[(val - 1) % 3];
-      document.getElementById('litBadge').textContent = `Năm phụng vụ: Năm ${letter} (bắt đầu Mùa Vọng ${built.adventStart.year}-${built.adventStart.month}-${built.adventStart.day})`;
+        // Liturgical year letter A/B/C: compute based on Easter year as earlier: N = year - 1; MAP[N % 3] => A,B,C
+        const map = ["A", "B", "C"];
+        const letter = map[(val - 1) % 3];
+        document.getElementById(
+          "litBadge"
+        ).textContent = `Năm phụng vụ: Năm ${letter} (bắt đầu Mùa Vọng ${built.adventStart.year}-${built.adventStart.month}-${built.adventStart.day})`;
 
-      // Render table
-      renderLiturgicalTable(built);
+        // Render table
+        renderLiturgicalTable(built);
 
-      // Show result box
-      document.getElementById('resultBox').style.display = 'block';
-    });
+        // Show result box
+        document.getElementById("resultBox").style.display = "block";
+      });
 
-    // allow Enter key to trigger
-    document.getElementById('yearInput').addEventListener('keydown', (ev) => {
-      if (ev.key === 'Enter') {
-        ev.preventDefault();
-        document.getElementById('calcBtn').click();
-      }
-    });
+      // allow Enter key to trigger
+      document.getElementById("yearInput").addEventListener("keydown", (ev) => {
+        if (ev.key === "Enter") {
+          ev.preventDefault();
+          document.getElementById("calcBtn").click();
+        }
+      });
 
-    // Initialize with current year
-    (function init() {
-      const now = new Date();
-      const y = now.getUTCFullYear();
-      document.getElementById('yearInput').value = Math.min(4099, Math.max(1583, y));
-      document.getElementById('calcBtn').click();
-    })();
-  </script>
-</body>
-
+      // Initialize with current year
+      (function init() {
+        const now = new Date();
+        const y = now.getFullYear();
+        document.getElementById("yearInput").value = Math.min(
+          4099,
+          Math.max(1583, y)
+        );
+        document.getElementById("calcBtn").click();
+      })();
+    </script>
+  </body>
 </html>
