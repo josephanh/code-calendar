@@ -41,7 +41,8 @@ document.getElementById("calcBtn").addEventListener("click", () => {
 
   // Build liturgical year relative to Easter in val
   const built = buildLiturgicalYearForEasterYear(val);
-
+  console.log(built.items);
+  
   // Easter display
   const easter = built.easter;
   const easterDate = toUTC(easter.year, easter.month, easter.day);

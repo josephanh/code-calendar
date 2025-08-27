@@ -147,8 +147,8 @@ td.sunday {
 }
 
 td.saturday {
-    background: #49b3ff;
-    color: rgb(255, 255, 255);
+    color: #49b3ff;
+    background: rgb(255, 255, 255);
     font-weight: bold;
 }
 
@@ -168,6 +168,14 @@ td .lunar-day {
     right: 6px;
     font-size: 12px;
     color: #000000;
+}
+td .sundayOrFeast {
+    position: absolute;
+    bottom: 2px;
+    width: 100%;
+    font-size: 12px;
+    color: red;
+    font-weight: bold;
 }
 
 .calendar-header {

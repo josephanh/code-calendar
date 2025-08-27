@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <title>Lịch 12 tháng PDF</title>
-    <link rel="shortcut icon" href="./image/logo.png" type="image/x-icon">
-    <link rel="stylesheet" href="./css/font.css">
+    <link rel="shortcut icon" href="./image/logo.png" type="image/x-icon" />
+    <link rel="stylesheet" href="./css/font.css" />
     <link rel="stylesheet" href="./css/index.css" />
     <link rel="stylesheet" href="./css/modal.css" />
 
@@ -80,7 +80,9 @@
     <div class="overlay hidden"></div>
   </body>
   <script src="./js/modal.js"></script>
+  <script src="./js/generateLiturgicalCalendar.js"></script>
   <script src="./js/generateCalendar.js"></script>
+
 
   <script src="./base64fonts/CrimsonText.js"></script>
   <script src="./base64fonts/CrimsonTextBold.js"></script>
@@ -98,11 +100,10 @@
         body.classList.add("printing");
         controls.classList.add("hidden");
 
-        allCalendars.innerHTML =
-          `<div class="fake-calendar"></div>` + cals;
+        allCalendars.innerHTML = `<div class="fake-calendar"></div>` + cals;
 
         var innn = alert(
-          "Muốn in khồn? /nĐang trong quá trình xử lý dữ liệu, vui lòng đợi trong giây lát."
+          "Muốn in không? /nĐang trong quá trình xử lý dữ liệu, vui lòng đợi trong giây lát."
         );
         if (innn) {
           controls.classList.remove("hidden");
