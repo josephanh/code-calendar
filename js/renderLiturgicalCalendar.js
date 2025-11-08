@@ -41,7 +41,7 @@ document.getElementById("calcBtn").addEventListener("click", () => {
 
   // Build liturgical year relative to Easter in val
   const built = buildLiturgicalYearForEasterYear(val);
-  console.log(built.items);
+  // console.log(built.items);
   
   // Easter display
   const easter = built.easter;

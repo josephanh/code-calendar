@@ -12,13 +12,13 @@ function generateCalendars() {
 
   function checkLiturgical(day, dom) {
     const item = liturgicalCalendar.find((i) => i.y === day.y && i.m === day.m);
-    console.log(item);
+    // console.log(item);
     return item;
   }
 
   function findByDay(day) {
     const result = liturgicalCalendar.find((item) => item.y === day.y && item.m === day.m && item.d === day.d);
-    console.log(result, day);
+    // console.log(result, day);
     
     if(result) {
       return result.sundayName;
@@ -47,7 +47,7 @@ function generateCalendars() {
     const logoWrapper = document.createElement("div");
     logoWrapper.className = "calendar-logo-wrapper";
     const logo = document.createElement("img");
-    logo.src = "./image/logo.png";
+    logo.src = "https://upload.wikimedia.org/wikipedia/commons/b/b4/MIC_COA_2009.png";
     logo.alt = "Logo";
     logo.className = "calendar-logo";
     logoWrapper.appendChild(logo);
@@ -142,15 +142,12 @@ function generateCalendars() {
 
       cell.appendChild(solarDiv);
       cell.appendChild(lunarDiv);
-<<<<<<< HEAD
+
       if (currentCol === 6) cell.classList.add("saturday");
       if (currentCol === 0) cell.classList.add("sunday"); // CN
-=======
+
       cell.appendChild(sundayOrFeast);
 
-      if (currentCol === 5) cell.classList.add("saturday");
-      if (currentCol === 6) cell.classList.add("sunday"); // CN
->>>>>>> f472111165e7370afe731df757cf439d82ad9386
       row.appendChild(cell);
       currentCol++;
       day++;
@@ -166,17 +163,20 @@ function generateCalendars() {
     }
     // Thêm nhân đức Đức Mẹ
     if (emptyStart > emptyEnd) {
-      const startCell = row.querySelector(".empty-cell.start");
+      let startCell = row.querySelector(".empty-cell.start");
       if (startCell) startCell.innerHTML = "Bạn có thể ghi chú đầu tháng!";
+      console.log("added note to start cell" + (month + 1));
     } else if (emptyEnd > emptyStart) {
-      const endCell = row.querySelector(".empty-cell.end");
+      let endCell = row.querySelector(".empty-cell.end");
       if (endCell) endCell.innerHTML = "Bạn có thể ghi chú cuối tháng!";
+      console.log("added note to start cell" + (month + 1));
     } else if (emptyStart === emptyEnd && emptyStart > 0) {
-      const startCell = row.querySelector(".empty-cell.start");
-      const endCell = row.querySelector(".empty-cell.end");
+      let startCell = row.querySelector(".empty-cell.start");
+      let endCell = row.querySelector(".empty-cell.end");
       if (startCell) startCell.innerHTML = "Ghi chú đầu";
       if (endCell) endCell.innerHTML = "Ghi chú cuối";
     }
+    console.log(emptyStart + " - " + emptyEnd + " in month " + (month + 1));
     tbody.appendChild(row);
 
     table.appendChild(tbody);

@@ -10,7 +10,7 @@ async function exportPDF() {
 
   doc.setFont("CrimsonText", "normal");
 
-  console.log(doc.getFontList());
+  // console.log(doc.getFontList());
 
   for (let i = 0; i < calendars.length; i++) {
     let element = calendars[i];
