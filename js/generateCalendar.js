@@ -6,6 +6,26 @@ function generateCalendars() {
   const font = document.getElementById("fontSelect").value;
   const fontSize = document.getElementById("fontSizeInput").value + "px";
 
+  const built = buildLiturgicalYearForEasterYear(year);
+  const liturgicalCalendar = built.items;
+  // console.log(liturgicalCalendar);
+
+  function checkLiturgical(day, dom) {
+    const item = liturgicalCalendar.find((i) => i.y === day.y && i.m === day.m);
+    console.log(item);
+    return item;
+  }
+
+  function findByDay(day) {
+    const result = liturgicalCalendar.find((item) => item.y === day.y && item.m === day.m && item.d === day.d);
+    console.log(result, day);
+    
+    if(result) {
+      return result.sundayName;
+    }
+    return null;
+  }
+
   const daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
   if ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0) {
     daysInMonth[1] = 29;
@@ -61,7 +81,9 @@ function generateCalendars() {
 
       // English
       const line2 = document.createElement("div");
+
       line2.textContent = d;
+
       th.appendChild(line1);
       th.appendChild(line2);
       headRow.appendChild(th);
@@ -114,10 +136,21 @@ function generateCalendars() {
         lunarDiv.textContent = lunar[0]; // Ngày âm
       }
 
+      const sundayOrFeast = document.createElement("div");
+      sundayOrFeast.classList.add("sundayOrFeast");
+      sundayOrFeast.innerText = findByDay({ y: year, m: month + 1, d: day });
+
       cell.appendChild(solarDiv);
       cell.appendChild(lunarDiv);
+<<<<<<< HEAD
       if (currentCol === 6) cell.classList.add("saturday");
       if (currentCol === 0) cell.classList.add("sunday"); // CN
+=======
+      cell.appendChild(sundayOrFeast);
+
+      if (currentCol === 5) cell.classList.add("saturday");
+      if (currentCol === 6) cell.classList.add("sunday"); // CN
+>>>>>>> f472111165e7370afe731df757cf439d82ad9386
       row.appendChild(cell);
       currentCol++;
       day++;

@@ -149,6 +149,6 @@ function getLunarMonth11(yy, timeZone) {
 }
 
 // ====== TEST ======
-const lunar = convertSolar2Lunar(19, 8, 2025, 7); 
-console.log(`Âm lịch: ${lunar[0]}/${lunar[1]}/${lunar[2]}${lunar[3] ? " (nhuận)" : ""}`);
+// const lunar = convertSolar2Lunar(19, 8, 2025, 7); 
+// console.log(`Âm lịch: ${lunar[0]}/${lunar[1]}/${lunar[2]}${lunar[3] ? " (nhuận)" : ""}`);
 // Kết quả: 26/7/2025

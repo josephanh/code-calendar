@@ -36,10 +36,10 @@ function convertMonthToText(month, style = "default") {
 }
 
 // Ví dụ dùng:
-console.log(convertMonthToText(1));         // "Tháng Một"
-console.log(convertMonthToText(1, "giêng"));// "Tháng Giêng"
-console.log(convertMonthToText(12));        // "Tháng Mười Hai"
-console.log(convertMonthToText(12, "giêng"));// "Tháng Chạp"
+// console.log(convertMonthToText(1));         // "Tháng Một"
+// console.log(convertMonthToText(1, "giêng"));// "Tháng Giêng"
+// console.log(convertMonthToText(12));        // "Tháng Mười Hai"
+// console.log(convertMonthToText(12, "giêng"));// "Tháng Chạp"
 
 function convertMonthToEnglish(month, style = "long") {
   // style: "long" = January, "short" = Jan
@@ -79,7 +79,7 @@ function convertMonthToEnglish(month, style = "long") {
 }
 
 // Ví dụ dùng:
-console.log(convertMonthToEnglish(1));          // "January"
-console.log(convertMonthToEnglish(1, "short")); // "Jan"
-console.log(convertMonthToEnglish(12));         // "December"
-console.log(convertMonthToEnglish(12, "short"));// "Dec"
+// console.log(convertMonthToEnglish(1));          // "January"
+// console.log(convertMonthToEnglish(1, "short")); // "Jan"
+// console.log(convertMonthToEnglish(12));         // "December"
+// console.log(convertMonthToEnglish(12, "short"));// "Dec"
