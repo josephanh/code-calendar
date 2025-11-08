@@ -6,7 +6,7 @@ function generateCalendars() {
   const font = document.getElementById("fontSelect").value;
   const fontSize = document.getElementById("fontSizeInput").value + "px";
 
-  const built = buildLiturgicalYearForEasterYear(year);
+  const built = buildLiturgicalYearForEasterYear(2026);
   const liturgicalCalendar = built.items;
   // console.log(liturgicalCalendar);
 
@@ -34,8 +34,8 @@ function generateCalendars() {
   for (let month = 0; month < 12; month++) {
     const cal = document.createElement("div");
     cal.className = "calendar";
-    cal.style.fontFamily = font;
-    cal.style.fontSize = fontSize;
+    // cal.style.fontFamily = font;
+    // cal.style.fontSize = fontSize;
 
     const header = document.createElement("div");
     header.className = "calendar-header";
