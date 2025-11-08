@@ -42,6 +42,7 @@ function generateCalendars() {
     headerMonth.appendChild(headerMonthL1);
     headerMonth.appendChild(headerMonthL2);
 
+    header.appendChild(document.createElement("div")); // spacer
     header.appendChild(headerYear);
     header.appendChild(logoWrapper);
     header.appendChild(headerMonth);
@@ -70,8 +71,8 @@ function generateCalendars() {
 
     const tbody = document.createElement("tbody");
 
-    let firstDay = new Date(year, month, 1).getDay();
-    if (firstDay === 0) firstDay = 7; // CN = 7
+    let firstDay = new Date(year, month, 1).getDay() + 1;
+    // if (firstDay === 0) firstDay = 7; // CN = 7
     let day = 1;
     let row = document.createElement("tr");
 
@@ -115,8 +116,8 @@ function generateCalendars() {
 
       cell.appendChild(solarDiv);
       cell.appendChild(lunarDiv);
-      if (currentCol === 5) cell.classList.add("saturday");
-      if (currentCol === 6) cell.classList.add("sunday"); // CN
+      if (currentCol === 6) cell.classList.add("saturday");
+      if (currentCol === 0) cell.classList.add("sunday"); // CN
       row.appendChild(cell);
       currentCol++;
       day++;

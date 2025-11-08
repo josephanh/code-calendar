@@ -60,8 +60,8 @@
         />
         <span id="titleFontSizeValue">20px</span>
       </label>
-
-      <button onclick="generateCalendars()">Tạo lịch</button>
+      
+      <button onclick="">Tạo lịch</button>
       <!-- <button onclick="downloadPDF()">Tải PDF</button> -->
       <!-- <button onclick="exportPDF()">Xuất PDF</button> -->
     </div>
@@ -79,13 +79,14 @@
 
     <div class="overlay hidden"></div>
   </body>
+
   <script src="./js/modal.js"></script>
   <script src="./js/generateCalendar.js"></script>
 
   <script src="./base64fonts/CrimsonText.js"></script>
   <script src="./base64fonts/CrimsonTextBold.js"></script>
   <script src="./js/exportCal.js"></script>
-
+  <script>generateCalendars()</script>
   <script>
     // lắng nghe sự kiện nút control + p
     document.addEventListener("keydown", function (event) {

@@ -108,6 +108,8 @@ button:last-of-type {
     /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); */
     margin: 0px auto;
     margin-top: 20px;
+    /* background-image: url('../image/Artboard\ 7.png'); */
+    /* background-size: contain; */
 }
 
 .calendar h2 {
@@ -138,6 +140,10 @@ td {
     text-align: center;
     vertical-align: middle;
     position: relative;
+    font-family: 'fontNumber', sans-serif !important;
+}
+* > .solar-day {
+    font-size: 65px !important;
 }
 
 td.sunday {
@@ -147,8 +153,8 @@ td.sunday {
 }
 
 td.saturday {
-    background: #49b3ff;
-    color: rgb(255, 255, 255);
+    background: white;
+    color: #2D8FCE;
     font-weight: bold;
 }
 
@@ -158,6 +164,7 @@ td .solar-day {
     font-size: 24px;
     font-weight: bold;
     line-height: 80px;
+    margin-top: -20px;
     /* canh giữa theo chiều cao td */
 }
 
@@ -176,11 +183,17 @@ td .lunar-day {
     align-items: end;
     margin-bottom: 1rem;
     font-family: 'TitleFont', sans-serif !important;
+    position: relative;
+
 }
 
 .calendar-header-year {
-    font-weight: bold;
+    /* font-weight: bold; */
     text-align: left;
+    font-size: 55px;
+    color: red;
+    position: absolute;
+    bottom: -10px;
 }
 
 .calendar-logo-wrapper {
@@ -191,15 +204,23 @@ td .lunar-day {
 }
 
 .calendar-logo {
-    width: 80px;
-    height: 80px;
+    width: 120px;
+    height: 120px;
+    margin-top: 20px;
 }
 
 .calendar-header-month {
-    font-weight: bold;
     text-align: right;
     flex-grow: 1;
     text-transform: uppercase;
+    font-size: 40px;
+    color: red;
+}
+.calendar-header-month > *:first-child{
+    font-size: 30px;
+    font-weight: normal;
+    text-transform: none;
+    color: black;
 }
 
 

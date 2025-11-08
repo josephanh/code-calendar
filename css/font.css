@@ -2,3 +2,9 @@
     font-family: TitleFont;
     src: url("../font/font-title/00135-UTM-Mobifone-KT.ttf") format("truetype");
 }
+@font-face {
+  font-family: 'fontNumber';            /* Tên bạn đặt, dùng để gọi */
+  src: url('../font/font-title/MYRIADPRO-BOLD.ttf') format('truetype'); /* Đường dẫn tới font và định dạng font */
+  font-weight: normal;
+  font-style: normal;
+}
