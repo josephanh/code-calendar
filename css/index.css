@@ -126,7 +126,7 @@ table {
 
 th,
 td {
-    border: 1px solid #ccc;
+    border: 1.25px solid #2D8FCE;
     text-align: center;
     vertical-align: middle;
     padding: 5px;
@@ -143,20 +143,25 @@ td {
 
 th {
     font-family: 'TitleFont', sans-serif !important;
+    color: #2D8FCE;
+}
+
+th > div:first-child {
+    text-transform: uppercase;
 }
 * > .solar-day {
     font-size: 65px !important;
 }
 
-td.sunday {
+.sunday {
     /* background: #ffebee; */
-    color: red;
+    color: #BE1E2D;
     font-weight: bold;
 }
 
-td.saturday, td .feast {
+.saturday{
     background: white;
-    color: #2D8FCE !important;
+    color: #2D8FCE;
     font-weight: bold;
 }
 
@@ -178,22 +183,31 @@ td .lunar-day {
     font-size: 12px;
     color: #000000;
 }
-td .sundayOrFeast, td .solemnity  , td .feast{
+.sundayOrFeast, .solemnity, .feast{
     position: absolute;
     bottom: 2px;
     width: -webkit-fill-available;
     font-size: 12px;
-    color: red;
+    color: #BE1E2D;
     font-weight: bold;
     white-space: pre-line;
 }
 
-td .sundayOrFeast > .feast {
-    color: blue;
+.feast {
+    color: #7F3F98;
 }
 
 .solemnity {
-    color: red !important;
+    color: #BE1E2D;
+}
+
+.espicialSunday {
+    background-color: #FCB216;
+    color: #BE1E2D;
+    font-weight: bold;
+}
+.espicialSunday .feast{
+    color: #BE1E2D;
 }
 
 .calendar-header {
@@ -210,7 +224,7 @@ td .sundayOrFeast > .feast {
     /* font-weight: bold; */
     text-align: left;
     font-size: 55px;
-    color: red;
+    color: #BE1E2D;
     position: absolute;
     bottom: -10px;
 }
@@ -233,7 +247,7 @@ td .sundayOrFeast > .feast {
     flex-grow: 1;
     text-transform: uppercase;
     font-size: 40px;
-    color: red;
+    color: #BE1E2D;
 }
 .calendar-header-month > *:first-child{
     font-size: 30px;

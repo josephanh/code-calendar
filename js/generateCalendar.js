@@ -149,29 +149,71 @@ function generateCalendars() {
 
       // Tìm lễ phụng vụ trong ngày
       let sundayOrFeast = document.createElement("div");
-      let feastNotOverite = document.createElement("div");
+      let feastNotOveride = document.createElement("div");
       let feastInfo = findByDay({ y: year, m: month + 1, d: day });
 
       if (feastInfo) {
-        // Phân loại theo độ ưu tiên (priority)
-        // console.log(feastInfo);
-        if (feastInfo.prority === 3) {
-          sundayOrFeast.classList.add("solemnity"); // Lễ trọng
-        } else if (feastInfo.prority === 2) {
-          feastNotOverite.classList.add("feast");
-          feastNotOverite.innerText = feastInfo.label + "hello";
-          sundayOrFeast.appendChild(feastNotOverite);
-        } else if (feastInfo.prority === 1) {
-          sundayOrFeast.classList.add("feast"); // Lễ kính
-        } else if (feastInfo.prority === -1) {
-          sundayOrFeast.classList.add("memorial"); // Lễ nhớ
-        } else {
-          sundayOrFeast.classList.add("sundayOrFeast"); // lễ chúa nhật
+        // Luôn hiển thị tên Chúa nhật nếu có
+        if (feastInfo.sundayName) {
+          sundayOrFeast.classList.add("sundayOrFeast");
+          sundayOrFeast.innerText = feastInfo.sundayName;
         }
-        // Ghi tên lễ vào ô
-        sundayOrFeast.innerText = feastInfo.name || "";
-      }
 
+        // Gán class và label lễ theo priority
+        console.log(feastInfo);
+        switch (feastInfo.prority) {
+          case prorityFeasts.solemnityOverride:
+            sundayOrFeast.classList.add("solemnity");
+            sundayOrFeast.innerText = feastInfo.label;
+            break;
+
+          case prorityFeasts.solemnity:
+            feastNotOveride.classList.add("solemnity");
+            feastNotOveride.innerText = feastInfo.label;
+            break;
+
+          case prorityFeasts.feastOverride:
+            if (
+              !feastInfo.name.toString().includes("Mùa Chay") &&
+              !feastInfo.name.toString().includes("Tro") &&
+              !feastInfo.name.toString().includes("Tuần Thánh")
+            ) {
+              sundayOrFeast.classList.add("sundayOrFeast");
+              sundayOrFeast.innerText = feastInfo.name;
+            }
+            feastNotOveride.classList.add("feast");
+            feastNotOveride.innerText = feastInfo.label;
+
+            break;
+
+          case prorityFeasts.feast:
+            feastNotOveride.classList.add("feast");
+            feastNotOveride.innerText = feastInfo.label;
+            break;
+
+          case prorityFeasts.memorial:
+            feastNotOveride.classList.add("memorial");
+            feastNotOveride.innerText = feastInfo.label;
+            break;
+          case prorityFeasts.sunday:
+            sundayOrFeast.classList.add("sundayOrFeast");
+
+            sundayOrFeast.innerText = feastInfo.name || "chưa có";
+
+            break;
+        }
+        if (
+          feastInfo.name.toString().includes("Lễ Phục Sinh") ||
+          feastInfo.name.toString().includes("Tuần Thánh")
+        ) {
+          cell.classList.add("espicialSunday");
+        }
+
+        // Chỉ append khi có label lễ
+        if (feastInfo.label) {
+          sundayOrFeast.appendChild(feastNotOveride);
+        }
+      }
       // Đặc biệt: ba ngày Tết Nguyên Đán (mồng 1–3 tháng Giêng âm)
       if (lunar[1] === 1 && lunar[0] >= 1 && lunar[0] <= 3) {
         console.log("Tết Nguyên Đán: " + lunar[0] + "/" + lunar[1]);

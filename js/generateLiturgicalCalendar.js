@@ -347,31 +347,74 @@ function buildLiturgicalYearForEasterYear(easterYear) {
 
   // Helper to push an item
   function pushItem(sundayName, weekNumber, ymd, label, prority = 0) {
-    // lễ trọng ghi đè chúa nhật (3)
-    // lễ trọng và các chúa nhật (màu đỏ/sunday) (2)
-    // lễ kính (màu xanh/feast) (1)
-    // lễ chúa nhật (màu đỏ/memorial) (0)
-    // lễ nhớ (màu đen) (-1)
-    if (prority > 0) {
-      let dayFeast = items.find((i) => i.m === ymd.month && i.d === ymd.day);
-      if (dayFeast) {
-        dayFeast.sundayName =
-          prority === 3 || prority === -1 ? sundayName : dayFeast.sundayName;
-        dayFeast.weekNumber = weekNumber;
-        dayFeast.prority = prority;
-        dayFeast.label = sundayName;
-        return;
+    let dayFeast = items.find((i) => i.m === ymd.month && i.d === ymd.day);
+    if (!dayFeast) {
+      items.push({
+        sundayName,
+        weekNumber,
+        y: ymd.year,
+        m: ymd.month,
+        d: ymd.day,
+        label,
+        prority,
+      });
+      return;
+    }
+    if (prority) {
+      let sunday = !dayFeast?.prority;
+      switch (prority) {
+        case prorityFeasts.solemnityOverride: {
+          // solemnityOverride
+          Object.assign(dayFeast, { sundayName: sundayName, prority });
+        }
+        case prorityFeasts.solemnity: {
+          // solemnity
+          if (sunday) {
+            Object.assign(dayFeast, {
+              label: sundayName,
+              prority,
+            });
+          } else {
+            Object.assign(dayFeast, {
+              sundayName: sundayName,
+              prority,
+            });
+          }
+        }
+        case prorityFeasts.feastOverride: {
+          // feastOverride
+          if (sunday) {
+            Object.assign(dayFeast, {
+              label: sundayName,
+              prority,
+            });
+          } else {
+            Object.assign(dayFeast, {
+              sundayName: sundayName,
+              prority,
+            });
+          }
+        }
+        case prorityFeasts.feast: {
+          // feast
+          if (sunday) break;
+          Object.assign(dayFeast, {
+            sundayName: sundayName,
+            prority,
+          });
+        }
+        case prorityFeasts.memorial: {
+          // memorial
+          if (sunday) break;
+          Object.assign(dayFeast, {
+            sundayName: sundayName,
+            prority,
+          });
+        }
+        default:
+          prority = 0;
       }
     }
-    items.push({
-      sundayName,
-      weekNumber,
-      y: ymd.year,
-      m: ymd.month,
-      d: ymd.day,
-      label,
-      prority,
-    });
   }
 
   // 1) MÙA VỌNG — CN I -> CN IV (4 Sundays)
@@ -416,28 +459,28 @@ function buildLiturgicalYearForEasterYear(easterYear) {
     null,
     christmasYMD,
     "Lễ Trọng Mừng Chúa Giáng Sinh",
-    3
+    prorityFeasts.solemnityOverride
   );
   pushItem(
     "Lễ Thánh Gia (Thánh Gia Giêsu, Maria, Giuse)",
     null,
     holyFamily,
     "Sau lễ Giáng Sinh",
-    3
+    prorityFeasts.solemnityOverride
   );
   pushItem(
     "Lễ Chúa Hiển Linh",
     null,
     epiphany,
     "Lễ Trọng Mừng Chúa Hiển Linh",
-    3
+    prorityFeasts.solemnityOverride
   );
   pushItem(
     "Lễ Chúa Giêsu chịu phép rửa",
     null,
     baptism,
     "Lễ Trọng Mừng Chúa Giêsu chịu phép rửa",
-    3
+    prorityFeasts.solemnityOverride
   );
 
   // 3) MÙA THỨNG NIEN: CN I Mùa TN -> CN VII Mùa TN (thường 7 CN, tuỳ năm)
@@ -449,7 +492,7 @@ function buildLiturgicalYearForEasterYear(easterYear) {
     const ashDate = toUTC(ash.year, ash.month, ash.day);
     if (curDate.getTime() >= ashDate.getTime()) break;
     const name = `CN ${Roman(weekCountOrdinary)} Mùa TN`;
-    pushItem(name, weekCountOrdinary, curOrd, "");
+    pushItem(name, weekCountOrdinary, curOrd, "", prorityFeasts.sunday);
     curOrd = addDaysYMD(curOrd, 7);
     weekCountOrdinary++;
     // safety limit
@@ -459,7 +502,7 @@ function buildLiturgicalYearForEasterYear(easterYear) {
   // 4) MÙA CHAY: CN I Mùa Chay -> CN VI Mùa Chay (thường 6 CN, tuỳ năm)
   // First Sunday of Lent is nextSundayOnOrAfter(ash)
 
-  pushItem("Thứ Tư Lễ Tro", null, ash, "Thứ Tư Lễ Tro - Bắt đầu mùa Chay", 1);
+  pushItem("Thứ Tư Lễ Tro", null, ash, "Thứ Tư Lễ Tro", prorityFeasts.feastOverride);
 
   let curLent = nextSundayOnOrAfter(ash);
   weekCount = 1;
@@ -469,7 +512,7 @@ function buildLiturgicalYearForEasterYear(easterYear) {
     const palmDate = toUTC(palm.year, palm.month, palm.day);
     if (curDate.getTime() >= palmDate.getTime()) break;
     const name = `CN ${Roman(weekCount)} Mùa Chay`;
-    pushItem(name, weekCount, curLent, "");
+    pushItem(name, weekCount, curLent, name, prorityFeasts.feastOverride);
     curLent = addDaysYMD(curLent, 7);
     weekCount++;
     if (weekCount > 6) break;
@@ -477,22 +520,22 @@ function buildLiturgicalYearForEasterYear(easterYear) {
 
   // Add Palm Sunday and Holy Week entries
   pushItem("CN Lễ Lá", null, palm, "Bắt đầu Tuần Thánh");
-  pushItem("Thứ Năm Tuần Thánh", null, holyThursday, "Tuần Thánh");
-  pushItem("Thứ Sáu Tuần Thánh", null, goodFriday, "Tuần Thánh");
-  pushItem("Thứ Bảy Tuần Thánh", null, holySaturday, "Tuần Thánh");
+  pushItem("Thứ Năm Tuần Thánh", null, holyThursday, "Tuần Thánh", prorityFeasts.feastOverride);
+  pushItem("Thứ Sáu Tuần Thánh", null, goodFriday, "Tuần Thánh", prorityFeasts.feastOverride);
+  pushItem("Thứ Bảy Tuần Thánh", null, holySaturday, "Tuần Thánh", prorityFeasts.feastOverride);
 
   // 5) PHỤC SINH & MÙA PHỤC SINH
-  pushItem("Lễ Phục Sinh", 1, easter, "");
+  pushItem("Lễ Phục Sinh", 1, easter, "", prorityFeasts.sunday);
   // After Easter, list Sundays of Easter season until Pentecost (7 weeks including Easter)
   let curEasterSun = easter; // Easter Sunday is week 1
   for (let w = 2; w <= 7; w++) {
     // Easter + 0..6 full weeks -> Pentecost is after 7 weeks (49 days)
     const dt = addDaysYMD(easter, (w - 1) * 7);
     const name = w === 1 ? `CN Phục Sinh` : `CN ${Roman(w)} Mùa Phục Sinh`;
-    pushItem(name, w, dt, "");
+    pushItem(name, w, dt, "", prorityFeasts.sunday);
   }
 
-  pushItem("Lễ Thăng Thiên", null, ascension, "Chúa Giêsu Lên Trời", 2);
+  pushItem("Lễ Thăng Thiên", null, ascension, "Chúa Giêsu Lên Trời", prorityFeasts.solemnityOverride);
 
   // 6) THỜI GIAN THƯỜNG NIÊN SAU PENTECOST -> until Christ the King (last Sunday before next Advent)
   // Start at first Sunday after Pentecost
@@ -509,7 +552,7 @@ function buildLiturgicalYearForEasterYear(easterYear) {
     if (christDate.getTime().toString() <= curDate.getTime()) break;
     const name = `CN ${Roman(weekCountOrdinary)} Mùa TN`;
 
-    pushItem(name, weekCountOrdinary, dateToYMD(christDate), name);
+    pushItem(name, weekCountOrdinary, dateToYMD(christDate), name, prorityFeasts.sunday);
     let timeLine = minusDaysYMD(christDate, 7);
 
     christDate = toUTC(timeLine.year, timeLine.month, timeLine.day);
@@ -519,25 +562,31 @@ function buildLiturgicalYearForEasterYear(easterYear) {
   }
 
   // Pentecost Sunday
-  pushItem("CN Lễ Hiện Xuống (Pentecost)", null, pentecost, "", 3);
+  pushItem("CN Lễ Hiện Xuống (Pentecost)", null, pentecost, "", prorityFeasts.solemnityOverride);
 
   // Trinity Sunday (CN sau Hiện Xuống)
-  pushItem("CN Lễ Chúa Ba Ngôi", null, trinity, "", 3);
+  pushItem("CN Lễ Chúa Ba Ngôi", null, trinity, "", prorityFeasts.solemnityOverride);
 
   // Corpus Christi (Mình Máu Thánh)
-  pushItem("Lễ Mình Máu Thánh Chúa", null, corpus, "");
+  pushItem("Lễ Mình Máu Thánh Chúa", null, corpus, "", prorityFeasts.solemnityOverride);
 
   // Sacred Heart (Thánh Tâm)
-  pushItem("Lễ Thánh Tâm Chúa Giêsu", null, sacredHeart, "");
+  pushItem("Lễ Thánh Tâm Chúa Giêsu", null, sacredHeart, "", prorityFeasts.solemnityOverride);
   // Add Christ the King
   pushItem(
     "Lễ Chúa Kitô Vua Vũ Trụ",
     34,
     christTheKingDate,
     "Kết thúc Năm Phụng Vụ",
-    3
+    prorityFeasts.solemnityOverride
   );
-  pushItem("Kỷ niệm cung hiến Thánh Đường Laterano", null, {day: 9, month: 11, year: easterYear}, "Kỷ niệm cung hiến Thánh Đường Laterano", 1);
+  pushItem(
+    "Kỷ niệm cung hiến Thánh Đường Laterano",
+    null,
+    { day: 9, month: 11, year: easterYear },
+    "Kỷ niệm cung hiến Thánh Đường Laterano",
+    prorityFeasts.feastOverride
+  );
 
   // Sort items chronologically (from adventStart up to day before nextAdventStart)
   items.sort((A, B) => {
