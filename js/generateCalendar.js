@@ -2,11 +2,15 @@ function generateCalendars() {
   const container = document.getElementById("all-calendars");
   container.innerHTML = "";
 
-  const year = parseInt(document.getElementById("yearInput").value);
+  // const year = parseInt(document.getElementById("yearInput").value);
+  const year = yearOfCalendar;
   const font = document.getElementById("fontSelect").value;
   const fontSize = document.getElementById("fontSizeInput").value + "px";
 
-  const built = buildLiturgicalYearForEasterYear(2026);
+  const built = buildLiturgicalYearForEasterYear(year);
+  const nextYearofCal11 = buildLiturgicalYearForEasterYear(year + 1);
+  built.items.push(...nextYearofCal11.items);
+  console.log(built.items);
   const liturgicalCalendar = built.items;
   // console.log(liturgicalCalendar);
 
@@ -17,11 +21,17 @@ function generateCalendars() {
   }
 
   function findByDay(day) {
-    const result = liturgicalCalendar.find((item) => item.y === day.y && item.m === day.m && item.d === day.d);
+    const result = liturgicalCalendar.find(
+      (item) => item.y === day.y && item.m === day.m && item.d === day.d
+    );
     // console.log(result, day);
-    
-    if(result) {
-      return result.sundayName;
+
+    if (result) {
+      return {
+        name: result.sundayName,
+        prority: result.prority,
+        label: result.label,
+      };
     }
     return null;
   }
@@ -47,7 +57,8 @@ function generateCalendars() {
     const logoWrapper = document.createElement("div");
     logoWrapper.className = "calendar-logo-wrapper";
     const logo = document.createElement("img");
-    logo.src = "https://upload.wikimedia.org/wikipedia/commons/b/b4/MIC_COA_2009.png";
+    logo.src =
+      "https://upload.wikimedia.org/wikipedia/commons/b/b4/MIC_COA_2009.png";
     logo.alt = "Logo";
     logo.className = "calendar-logo";
     logoWrapper.appendChild(logo);
@@ -136,15 +147,42 @@ function generateCalendars() {
         lunarDiv.textContent = lunar[0]; // Ngày âm
       }
 
-      const sundayOrFeast = document.createElement("div");
-      sundayOrFeast.classList.add("sundayOrFeast");
-      sundayOrFeast.innerText = findByDay({ y: year, m: month + 1, d: day });
+      // Tìm lễ phụng vụ trong ngày
+      let sundayOrFeast = document.createElement("div");
+      let feastNotOverite = document.createElement("div");
+      let feastInfo = findByDay({ y: year, m: month + 1, d: day });
 
+      if (feastInfo) {
+        // Phân loại theo độ ưu tiên (priority)
+        // console.log(feastInfo);
+        if (feastInfo.prority === 3) {
+          sundayOrFeast.classList.add("solemnity"); // Lễ trọng
+        } else if (feastInfo.prority === 2) {
+          feastNotOverite.classList.add("feast");
+          feastNotOverite.innerText = feastInfo.label;
+          sundayOrFeast.appendChild(feastNotOverite);
+        } else if (feastInfo.prority === 1) {
+          sundayOrFeast.classList.add("feast"); // Lễ kính
+        } else if (feastInfo.prority === -1) {
+          sundayOrFeast.classList.add("memorial"); // Lễ nhớ
+        } else {
+          sundayOrFeast.classList.add("sundayOrFeast"); // lễ chúa nhật
+        }
+        // Ghi tên lễ vào ô
+        sundayOrFeast.innerText = feastInfo.name || "";
+      }
+
+      // Đặc biệt: ba ngày Tết Nguyên Đán (mồng 1–3 tháng Giêng âm)
+      if (lunar[1] === 1 && lunar[0] >= 1 && lunar[0] <= 3) {
+        sundayOrFeast.classList.add = "sundayOrFeast";
+        sundayOrFeast.textContent += `\nMùng ${lunar[0]} Tết Nguyên Đán`;
+      }
       cell.appendChild(solarDiv);
       cell.appendChild(lunarDiv);
 
-      if (currentCol === 6) cell.classList.add("saturday");
-      if (currentCol === 0) cell.classList.add("sunday"); // CN
+      // Đánh dấu ngày cuối tuần để tô màu đặc biệt
+      if (currentCol === 0) cell.classList.add("sunday"); // Chủ nhật (cột đầu tiên)
+      if (currentCol === 6) cell.classList.add("saturday"); // Thứ bảy (cột cuối cùng)
 
       cell.appendChild(sundayOrFeast);
 
@@ -163,20 +201,22 @@ function generateCalendars() {
     }
     // Thêm nhân đức Đức Mẹ
     if (emptyStart > emptyEnd) {
-      let startCell = row.querySelector(".empty-cell.start");
+      let startCell = tbody.querySelector(".empty-cell.start");
       if (startCell) startCell.innerHTML = "Bạn có thể ghi chú đầu tháng!";
-      console.log("added note to start cell" + (month + 1));
+      // console.log(startCell);
     } else if (emptyEnd > emptyStart) {
       let endCell = row.querySelector(".empty-cell.end");
       if (endCell) endCell.innerHTML = "Bạn có thể ghi chú cuối tháng!";
-      console.log("added note to start cell" + (month + 1));
-    } else if (emptyStart === emptyEnd && emptyStart > 0) {
-      let startCell = row.querySelector(".empty-cell.start");
-      let endCell = row.querySelector(".empty-cell.end");
-      if (startCell) startCell.innerHTML = "Ghi chú đầu";
-      if (endCell) endCell.innerHTML = "Ghi chú cuối";
+      // console.log("added note to start cell" + (month + 1));
     }
-    console.log(emptyStart + " - " + emptyEnd + " in month " + (month + 1));
+    // nếu bằng nhau thì không thêm gì cả
+    // else if (emptyStart === emptyEnd && emptyStart > 0) {
+    //   let startCell = row.querySelector(".empty-cell.start");
+    //   let endCell = row.querySelector(".empty-cell.end");
+    //   if (startCell) startCell.innerHTML = "Ghi chú đầu";
+    //   if (endCell) endCell.innerHTML = "Ghi chú cuối";
+    // }
+    // console.log(emptyStart + " - " + emptyEnd + " in month " + (month + 1));
     tbody.appendChild(row);
 
     table.appendChild(tbody);

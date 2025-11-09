@@ -279,6 +279,7 @@ function buildLiturgicalYearForEasterYear(easterYear) {
   // We'll produce list from adventStart (inclusive) up to day before next adventStart (i.e., next year's first advent)
   const nextAdventStart = firstSundayOfAdvent(easterYear);
 
+  console.log(nextAdventStart);
   // Easter (civil)
   const easter = easterGregorian(easterYear); // {year,month,day}
   const easterDate = toUTC(easter.year, easter.month, easter.day);
@@ -346,11 +347,18 @@ function buildLiturgicalYearForEasterYear(easterYear) {
 
   // Helper to push an item
   function pushItem(sundayName, weekNumber, ymd, label, prority = 0) {
-    if (prority === 1) {
+    // lễ trọng ghi đè chúa nhật (3)
+    // lễ trọng và các chúa nhật (màu đỏ/sunday) (2)
+    // lễ kính (màu xanh/feast) (1)
+    // lễ nhớ (màu đen/memorial) (0)
+    if (prority > 0) {
       let dayFeast = items.find((i) => i.m === ymd.month && i.d === ymd.day);
       if (dayFeast) {
-        dayFeast.sundayName = sundayName;
+        dayFeast.sundayName =
+          prority === 3 || prority === -1 ? sundayName : dayFeast.sundayName;
         dayFeast.weekNumber = weekNumber;
+        dayFeast.prority = prority;
+        dayFeast.label = sundayName;
         return;
       }
     }
@@ -373,10 +381,10 @@ function buildLiturgicalYearForEasterYear(easterYear) {
       name,
       i + 1,
       dt,
-      i === 3 ? "CN IV Mùa Vọng (CN Gaudete nếu thích)" : ""
+      i === 3 ? "CN IV Mùa Vọng (CN Gaudete nếu thích)" : "",
+      2
     );
   }
-
   // 2) GIÁNG SINH SEASON: Christmas (25/12), then Sundays of Christmas season:
   // We'll include: Lễ Giáng Sinh (25/12), CN trong Giáng Sinh (CN after Christmas) up to Epiphany/Baptism
   // For simplicity, include Christmas day (as special) and any Sundays between Dec25 and Epiphany (inclusive).
@@ -406,28 +414,28 @@ function buildLiturgicalYearForEasterYear(easterYear) {
     null,
     christmasYMD,
     "Lễ Trọng Mừng Chúa Giáng Sinh",
-    1
+    3
   );
   pushItem(
     "Lễ Thánh Gia (Thánh Gia Giêsu, Maria, Giuse)",
     null,
     holyFamily,
     "Sau lễ Giáng Sinh",
-    1
+    3
   );
   pushItem(
     "Lễ Chúa Hiển Linh",
     null,
     epiphany,
     "Lễ Trọng Mừng Chúa Hiển Linh",
-    1
+    3
   );
   pushItem(
     "Lễ Chúa Giêsu chịu phép rửa",
     null,
     baptism,
     "Lễ Trọng Mừng Chúa Giêsu chịu phép rửa",
-    1
+    3
   );
 
   // 3) MÙA THỨNG NIEN: CN I Mùa TN -> CN VII Mùa TN (thường 7 CN, tuỳ năm)
@@ -469,12 +477,7 @@ function buildLiturgicalYearForEasterYear(easterYear) {
   pushItem("CN Lễ Lá", null, palm, "Bắt đầu Tuần Thánh");
   pushItem("Thứ Năm Tuần Thánh", null, holyThursday, "Tuần Thánh");
   pushItem("Thứ Sáu Tuần Thánh", null, goodFriday, "Tuần Thánh");
-  pushItem(
-    "Thứ Bảy Tuần Thánh",
-    null,
-    holySaturday,
-    "Tuần Thánh"
-  );
+  pushItem("Thứ Bảy Tuần Thánh", null, holySaturday, "Tuần Thánh");
 
   // 5) PHỤC SINH & MÙA PHỤC SINH
   pushItem("Lễ Phục Sinh", 1, easter, "");
@@ -483,12 +486,11 @@ function buildLiturgicalYearForEasterYear(easterYear) {
   for (let w = 2; w <= 7; w++) {
     // Easter + 0..6 full weeks -> Pentecost is after 7 weeks (49 days)
     const dt = addDaysYMD(easter, (w - 1) * 7);
-    const name =
-      w === 1 ? `CN Phục Sinh` : `CN ${Roman(w)} Mùa Phục Sinh`;
+    const name = w === 1 ? `CN Phục Sinh` : `CN ${Roman(w)} Mùa Phục Sinh`;
     pushItem(name, w, dt, "");
   }
 
-  pushItem("Lễ Thăng Thiên", null, ascension, "Chúa Giêsu Lên Trời", 1);
+  pushItem("Lễ Thăng Thiên", null, ascension, "Chúa Giêsu Lên Trời", 2);
 
   // 6) THỜI GIAN THƯỜNG NIÊN SAU PENTECOST -> until Christ the King (last Sunday before next Advent)
   // Start at first Sunday after Pentecost
@@ -515,10 +517,10 @@ function buildLiturgicalYearForEasterYear(easterYear) {
   }
 
   // Pentecost Sunday
-  pushItem("CN Lễ Hiện Xuống (Pentecost)", null, pentecost, "", 1);
+  pushItem("CN Lễ Hiện Xuống (Pentecost)", null, pentecost, "", 2);
 
   // Trinity Sunday (CN sau Hiện Xuống)
-  pushItem("CN Lễ Chúa Ba Ngôi", null, trinity, "", 1);
+  pushItem("CN Lễ Chúa Ba Ngôi", null, trinity, "", 3);
 
   // Corpus Christi (Mình Máu Thánh)
   pushItem("Lễ Mình Máu Thánh Chúa", null, corpus, "");
@@ -527,7 +529,7 @@ function buildLiturgicalYearForEasterYear(easterYear) {
   pushItem("Lễ Thánh Tâm Chúa Giêsu", null, sacredHeart, "");
   // Add Christ the King
   pushItem(
-    "CN XXXIV TN Lễ Chúa Kitô Vua Vũ Trụ (Christ the King)",
+    "Lễ Chúa Kitô Vua Vũ Trụ",
     34,
     christTheKingDate,
     "Kết thúc Năm Phụng Vụ",

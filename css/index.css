@@ -2,8 +2,6 @@ body {
     background: #ffffff;
     margin: 0;
     padding: 20px;
-    display: grid;
-    grid-template-columns: 20% 75%;
 
 }
 
@@ -142,6 +140,10 @@ td {
     position: relative;
     font-family: 'fontNumber', sans-serif !important;
 }
+
+th {
+    font-family: 'TitleFont', sans-serif !important;
+}
 * > .solar-day {
     font-size: 65px !important;
 }
@@ -153,13 +155,8 @@ td.sunday {
 }
 
 td.saturday {
-<<<<<<< HEAD
     background: white;
     color: #2D8FCE;
-=======
-    color: #49b3ff;
-    background: rgb(255, 255, 255);
->>>>>>> f472111165e7370afe731df757cf439d82ad9386
     font-weight: bold;
 }
 
@@ -181,13 +178,18 @@ td .lunar-day {
     font-size: 12px;
     color: #000000;
 }
-td .sundayOrFeast {
+td .sundayOrFeast, td .solemnity  , td .feast{
     position: absolute;
     bottom: 2px;
-    width: 100%;
+    width: -webkit-fill-available;
     font-size: 12px;
     color: red;
     font-weight: bold;
+    white-space: pre-line;
+}
+
+.sundayOrFeast .feast {
+    color: blue !important;
 }
 
 .calendar-header {
