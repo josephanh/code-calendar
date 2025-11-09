@@ -22,7 +22,7 @@ function generateCalendars() {
 
   function findByDay(day) {
     const result = liturgicalCalendar.find(
-      (item) => item.y === day.y && item.m === day.m && item.d === day.d
+      (item) => item.y == day.y && item.m == day.m && item.d == day.d
     );
     // console.log(result, day);
 
@@ -159,7 +159,7 @@ function generateCalendars() {
           sundayOrFeast.classList.add("solemnity"); // Lễ trọng
         } else if (feastInfo.prority === 2) {
           feastNotOverite.classList.add("feast");
-          feastNotOverite.innerText = feastInfo.label;
+          feastNotOverite.innerText = feastInfo.label + "hello";
           sundayOrFeast.appendChild(feastNotOverite);
         } else if (feastInfo.prority === 1) {
           sundayOrFeast.classList.add("feast"); // Lễ kính
@@ -174,7 +174,8 @@ function generateCalendars() {
 
       // Đặc biệt: ba ngày Tết Nguyên Đán (mồng 1–3 tháng Giêng âm)
       if (lunar[1] === 1 && lunar[0] >= 1 && lunar[0] <= 3) {
-        sundayOrFeast.classList.add = "sundayOrFeast";
+        console.log("Tết Nguyên Đán: " + lunar[0] + "/" + lunar[1]);
+        sundayOrFeast.classList.add("sundayOrFeast");
         sundayOrFeast.textContent += `\nMùng ${lunar[0]} Tết Nguyên Đán`;
       }
       cell.appendChild(solarDiv);

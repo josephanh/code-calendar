@@ -154,9 +154,9 @@ td.sunday {
     font-weight: bold;
 }
 
-td.saturday {
+td.saturday, td .feast {
     background: white;
-    color: #2D8FCE;
+    color: #2D8FCE !important;
     font-weight: bold;
 }
 
@@ -188,8 +188,12 @@ td .sundayOrFeast, td .solemnity  , td .feast{
     white-space: pre-line;
 }
 
-.sundayOrFeast .feast {
-    color: blue !important;
+td .sundayOrFeast > .feast {
+    color: blue;
+}
+
+.solemnity {
+    color: red !important;
 }
 
 .calendar-header {

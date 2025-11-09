@@ -350,7 +350,8 @@ function buildLiturgicalYearForEasterYear(easterYear) {
     // lễ trọng ghi đè chúa nhật (3)
     // lễ trọng và các chúa nhật (màu đỏ/sunday) (2)
     // lễ kính (màu xanh/feast) (1)
-    // lễ nhớ (màu đen/memorial) (0)
+    // lễ chúa nhật (màu đỏ/memorial) (0)
+    // lễ nhớ (màu đen) (-1)
     if (prority > 0) {
       let dayFeast = items.find((i) => i.m === ymd.month && i.d === ymd.day);
       if (dayFeast) {
@@ -369,6 +370,7 @@ function buildLiturgicalYearForEasterYear(easterYear) {
       m: ymd.month,
       d: ymd.day,
       label,
+      prority,
     });
   }
 
@@ -382,7 +384,7 @@ function buildLiturgicalYearForEasterYear(easterYear) {
       i + 1,
       dt,
       i === 3 ? "CN IV Mùa Vọng (CN Gaudete nếu thích)" : "",
-      2
+      0
     );
   }
   // 2) GIÁNG SINH SEASON: Christmas (25/12), then Sundays of Christmas season:
@@ -447,7 +449,7 @@ function buildLiturgicalYearForEasterYear(easterYear) {
     const ashDate = toUTC(ash.year, ash.month, ash.day);
     if (curDate.getTime() >= ashDate.getTime()) break;
     const name = `CN ${Roman(weekCountOrdinary)} Mùa TN`;
-    pushItem(name, weekCountOrdinary, curOrd, "", 0);
+    pushItem(name, weekCountOrdinary, curOrd, "");
     curOrd = addDaysYMD(curOrd, 7);
     weekCountOrdinary++;
     // safety limit
@@ -517,7 +519,7 @@ function buildLiturgicalYearForEasterYear(easterYear) {
   }
 
   // Pentecost Sunday
-  pushItem("CN Lễ Hiện Xuống (Pentecost)", null, pentecost, "", 2);
+  pushItem("CN Lễ Hiện Xuống (Pentecost)", null, pentecost, "", 3);
 
   // Trinity Sunday (CN sau Hiện Xuống)
   pushItem("CN Lễ Chúa Ba Ngôi", null, trinity, "", 3);
@@ -533,8 +535,9 @@ function buildLiturgicalYearForEasterYear(easterYear) {
     34,
     christTheKingDate,
     "Kết thúc Năm Phụng Vụ",
-    1
+    3
   );
+  pushItem("Kỷ niệm cung hiến Thánh Đường Laterano", null, {day: 9, month: 11, year: easterYear}, "Kỷ niệm cung hiến Thánh Đường Laterano", 1);
 
   // Sort items chronologically (from adventStart up to day before nextAdventStart)
   items.sort((A, B) => {
