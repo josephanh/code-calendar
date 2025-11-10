@@ -170,6 +170,7 @@ function generateCalendars() {
           case prorityFeasts.solemnity:
             feastNotOveride.classList.add("solemnity");
             feastNotOveride.innerText = feastInfo.label;
+            cell.classList.add("solemnity");
             break;
 
           case prorityFeasts.feastOverride:
@@ -180,10 +181,13 @@ function generateCalendars() {
             ) {
               sundayOrFeast.classList.add("sundayOrFeast");
               sundayOrFeast.innerText = feastInfo.name;
+            } else {
+              feastNotOveride.classList.add("feast");
+              feastNotOveride.innerText = feastInfo.label;
             }
-            feastNotOveride.classList.add("feast");
-            feastNotOveride.innerText = feastInfo.label;
-
+            if (feastInfo.name.toString().includes("Tro")) {
+              cell.classList.add("ashWednesday");
+            }
             break;
 
           case prorityFeasts.feast:
@@ -197,14 +201,16 @@ function generateCalendars() {
             break;
           case prorityFeasts.sunday:
             sundayOrFeast.classList.add("sundayOrFeast");
-
             sundayOrFeast.innerText = feastInfo.name || "chưa có";
 
             break;
         }
         if (
           feastInfo.name.toString().includes("Lễ Phục Sinh") ||
-          feastInfo.name.toString().includes("Tuần Thánh")
+          feastInfo.name.toString().includes("Thứ Bảy Tuần Thánh") ||
+          feastInfo.name.toString().includes("Thứ Năm Tuần Thánh") ||
+          feastInfo.name.toString().includes("Thứ Sáu Tuần Thánh") ||
+          feastInfo.name.toString().includes("Chúa Giáng Sinh")
         ) {
           cell.classList.add("espicialSunday");
         }
@@ -215,10 +221,9 @@ function generateCalendars() {
         }
       }
       // Đặc biệt: ba ngày Tết Nguyên Đán (mồng 1–3 tháng Giêng âm)
-      if (lunar[1] === 1 && lunar[0] >= 1 && lunar[0] <= 3) {
-        console.log("Tết Nguyên Đán: " + lunar[0] + "/" + lunar[1]);
+      if (lunar[1] === 1 && lunar[0] === 1) {
         sundayOrFeast.classList.add("sundayOrFeast");
-        sundayOrFeast.textContent += `\nMùng ${lunar[0]} Tết Nguyên Đán`;
+        sundayOrFeast.textContent = `Tết Nguyên Đán`;
       }
       cell.appendChild(solarDiv);
       cell.appendChild(lunarDiv);

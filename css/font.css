@@ -5,6 +5,12 @@
 @font-face {
   font-family: 'fontNumber';            /* Tên bạn đặt, dùng để gọi */
   src: url('../font/font-title/MYRIADPRO-BOLD.ttf') format('truetype'); /* Đường dẫn tới font và định dạng font */
-  font-weight: normal;
+  font-weight: 800;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'fontNumber';            /* Tên bạn đặt, dùng để gọi */
+  src: url('../font/font-title/MYRIADPRO-REGULAR.ttf') format('truetype'); /* Đường dẫn tới font và định dạng font */
+  font-weight: 400;
   font-style: normal;
 }

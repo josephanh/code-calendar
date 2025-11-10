@@ -138,6 +138,7 @@ td {
     text-align: center;
     vertical-align: middle;
     position: relative;
+    justify-content: space-around;
     font-family: 'fontNumber', sans-serif !important;
 }
 
@@ -165,7 +166,6 @@ th > div:first-child {
     font-weight: bold;
 }
 
-
 /* Ngày dương – to, ở giữa */
 td .solar-day {
     font-size: 24px;
@@ -183,9 +183,8 @@ td .lunar-day {
     font-size: 12px;
     color: #000000;
 }
-.sundayOrFeast, .solemnity, .feast{
-    position: absolute;
-    bottom: 2px;
+.sundayOrFeast, .solemnity {
+    margin-bottom: -20px;
     width: -webkit-fill-available;
     font-size: 12px;
     color: #BE1E2D;
@@ -195,12 +194,31 @@ td .lunar-day {
 
 .feast {
     color: #7F3F98;
+    font-size: 12px;
+    font-weight: bold;
+    white-space: pre-line;
+    line-height: 95%;
+    margin-bottom: -10px;
 }
 
 .solemnity {
     color: #BE1E2D;
 }
+.feast {
 
+}
+.memorial {
+    color: #000000;
+    font-size: 12px;
+    font-weight: 400;
+    white-space: pre-line;
+    line-height: 95%;
+    margin-bottom: -10px;
+}
+
+.ashWednesday > .solar-day {
+    color: #7F3F98 !important;
+}
 .espicialSunday {
     background-color: #FCB216;
     color: #BE1E2D;
