@@ -40,7 +40,7 @@ function generateCalendars() {
   if ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0) {
     daysInMonth[1] = 29;
   }
-
+  let indexVir = 0;
   for (let month = 0; month < 12; month++) {
     const cal = document.createElement("div");
     cal.className = "calendar";
@@ -160,7 +160,6 @@ function generateCalendars() {
         }
 
         // Gán class và label lễ theo priority
-        console.log(feastInfo);
         switch (feastInfo.prority) {
           case prorityFeasts.solemnityOverride:
             sundayOrFeast.classList.add("solemnity");
@@ -193,9 +192,11 @@ function generateCalendars() {
           case prorityFeasts.feast:
             feastNotOveride.classList.add("feast");
             feastNotOveride.innerText = feastInfo.label;
+            cell.classList.add("feast-1");
             break;
 
           case prorityFeasts.memorial:
+          case prorityFeasts.memorialOverride:
             feastNotOveride.classList.add("memorial");
             feastNotOveride.innerText = feastInfo.label;
             break;
@@ -215,10 +216,23 @@ function generateCalendars() {
           cell.classList.add("espicialSunday");
         }
 
+        if (feastInfo.label.toString().includes("Tro")) {
+          cell.classList.add("ash");
+        }
+        if (
+          feastInfo.name.toString().includes("Vô Nhiễm Nguyên Tội") ||
+          feastInfo.name.toString().includes("Stanislaô Papczynski")
+        ) {
+          cell.classList.add("verySolemnity");
+        }
+
         // Chỉ append khi có label lễ
         if (feastInfo.label) {
           sundayOrFeast.appendChild(feastNotOveride);
         }
+      } else {
+        sundayOrFeast.append(document.createElement('br'));
+        sundayOrFeast.classList.add('sundayOrFeast');
       }
       // Đặc biệt: ba ngày Tết Nguyên Đán (mồng 1–3 tháng Giêng âm)
       if (lunar[1] === 1 && lunar[0] === 1) {
@@ -247,16 +261,66 @@ function generateCalendars() {
       td.colSpan = emptyEnd;
       row.appendChild(td);
     }
+
     // Thêm nhân đức Đức Mẹ
-    if (emptyStart > emptyEnd) {
-      let startCell = tbody.querySelector(".empty-cell.start");
-      if (startCell) startCell.innerHTML = "Bạn có thể ghi chú đầu tháng!";
-      // console.log(startCell);
-    } else if (emptyEnd > emptyStart) {
-      let endCell = row.querySelector(".empty-cell.end");
-      if (endCell) endCell.innerHTML = "Bạn có thể ghi chú cuối tháng!";
-      // console.log("added note to start cell" + (month + 1));
+    let addText = "";
+    let startCell = tbody.querySelector(".empty-cell.start");
+    let endCell = row.querySelector(".empty-cell.end");
+
+    // xác định nội dung cố định cho tháng 11/12
+    let fixedText = "";
+    if (month === 10) fixedText = `<div class="virtuesRev">LẠY CHÚA, XIN CHO CÁC LINH HỒN ĐƯỢC NGHỈ YÊN MUÔN ĐỜI</div><div class="virtuesRes">VÀ CHO ÁNH SÁNG NGÀN THU CHIẾU SOI TRÊN CÁC LINH HỒN ẤY!</div>`; // tháng 11
+    else if (month === 11) fixedText = `<div class="virtuesRev">ĐỨC MẸ HỘ TRÌ<div class="virtuesRev">`; // tháng 12
+
+    // **Số lượng nhân đức trong mảng virtues**
+    const virtuesLen = Object.keys(virtues).length;
+
+    if (emptyStart >= 3 || emptyEnd >= 3) {
+      // **Trường hợp cả hai > 3: luôn thêm cho cả hai ô**
+      if (emptyStart > 3 && emptyEnd > 3) {
+        if (fixedText) {
+          if (startCell) startCell.innerHTML = `<div>${fixedText}</div>`;
+          if (endCell) endCell.innerHTML = `<div>${fixedText}</div>`;
+          // **fixedText không làm thay đổi indexVir**
+        } else {
+          // **lấy hai nhân đức khác nhau (quay vòng nếu cần)**
+          const v1 = virtues[indexVir % virtuesLen];
+          const v2 = virtues[(indexVir + 1) % virtuesLen];
+          if (startCell)
+            startCell.innerHTML = `<div class="virtuesRev">${v1}</div><div class="virtuesRes">CẦU CHO CHÚNG CON</div>`;
+          if (endCell)
+            endCell.innerHTML = `<div class="virtuesRev">${v2}</div><div class="virtuesRes">CẦU CHO CHÚNG CON</div>`;
+          // **tăng indexVir 2 bước và quay vòng**
+          indexVir = (indexVir + 2) % virtuesLen;
+        }
+      } else {
+        // **Chỉ một ô thỏa (thực hiện giống logic trước nhưng quay vòng khi cần)**
+        if (emptyStart >= 3 && emptyStart > emptyEnd) {
+          if (startCell) {
+            addText = fixedText
+              ? `<div class="virtuesRev">${fixedText}</div>`
+              : `<div class="virtuesRev">${
+                  virtues[indexVir % virtuesLen]
+                }</div><div class="virtuesRes">CẦU CHO CHÚNG CON</div>`;
+            startCell.innerHTML = addText;
+            if (!fixedText) indexVir = (indexVir + 1) % virtuesLen;
+          }
+        }
+
+        if (emptyEnd >= 3 && emptyEnd > emptyStart) {
+          if (endCell) {
+            addText = fixedText
+              ? `${fixedText}`
+              : `<div class="virtuesRev">${
+                  virtues[indexVir % virtuesLen]
+                }</div><div class="virtuesRes">CẦU CHO CHÚNG CON</div>`;
+            endCell.innerHTML = addText;
+            if (!fixedText) indexVir = (indexVir + 1) % virtuesLen;
+          }
+        }
+      }
     }
+
     // nếu bằng nhau thì không thêm gì cả
     // else if (emptyStart === emptyEnd && emptyStart > 0) {
     //   let startCell = row.querySelector(".empty-cell.start");
