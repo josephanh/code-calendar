@@ -391,7 +391,7 @@ function buildLiturgicalYearForEasterYear(easterYear) {
       case prorityFeasts.feastOverride: {
         // Lễ kính override -> giữ CN + thêm tên lễ
         Object.assign(dayFeast, {
-          sundayName: `${dayFeast.sundayName}\n${label}`,
+          sundayName: `${dayFeast.sundayName}<div class="feast">${label}</div>`,
           label,
           prority,
         });
@@ -713,7 +713,7 @@ function buildLiturgicalYearForEasterYear(easterYear) {
     null,
     { day: 9, month: 11, year: easterYear },
     "Kỷ niệm cung hiến Thánh Đường Laterano",
-    prorityFeasts.feastOverride
+    prorityFeasts.feast
   );
 
   // thêm lễ nhớ
